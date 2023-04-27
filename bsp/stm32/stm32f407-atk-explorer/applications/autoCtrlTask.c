@@ -454,6 +454,9 @@ void  autoCtrlTask(void *para)
 			  autoCtrlRun();
 			  ctrlOutSetIO();
 				rt_thread_mdelay(1000);
+#ifdef  USE_WDT
+			  rt_event_send(&WDTEvent,EVENT_WDT_AUTOCTRL);
+#endif
 		}
 }
 

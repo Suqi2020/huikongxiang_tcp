@@ -502,9 +502,7 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 					}
 				}
 				break;    		
-			case MODBUS_CFG_SORT_ADDR:
-				//LCDInput.
-				break; 		
+//
 			case MODBUS_CFG_TYPE_ADDR:
 				for(int i=0;i<8;i++){
 					LCDInput.model[i]=recBuf[7+i];

@@ -83,6 +83,9 @@ void  w5500Task(void *parameter)
 //  stm32_flash_read(FLASH_IP_SAVE_ADDR,(uint8_t*)&netIpFlash,sizeof(netIpFlash));
   while(1) 														/*循环执行的函数*/ 
   {
+#ifdef  USE_WDT
+		rt_event_send(&WDTEvent,EVENT_WDT_W5500);
+#endif
 		switch(W5500State)
 		{
 			case W5500InitEnum:
@@ -120,10 +123,6 @@ void  w5500Task(void *parameter)
 			case W5500NetOKEnum:{
 			      //ret=rt_sem_take(w5500Iqr_semp,1000);//阻塞1秒 查询中断状态 等中断来//RT_WAITING_FOREVER
 			      static int count=0;      
-						if(ret==RT_EOK){
-								W5500ISR();//w5500
-								//loopback_tcpc(SOCK_TCPC, packFlash.netIpFlash.remotePort);//W5500内部自动维护网络连接 此处只读寄存器
-						}
 						void loopback_tcp(uint16 port);
 						loopback_tcp( packFlash.netIpFlash.remotePort);
 						rt_thread_delay(100);

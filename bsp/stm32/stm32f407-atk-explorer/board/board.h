@@ -73,6 +73,24 @@
 #include "modbusConfig.h"
 //#include "utf_8.h"
 
+#define  USE_WDT
+
+#define  PACK_HEAD_LEN  4
+
+ 
+#ifdef  USE_WDT
+#define EVENT_WDT_AUTOCTRL   (1 << 1)
+#define EVENT_WDT_W5500      (1 << 2)
+#define EVENT_WDT_UPTASK     (1 << 3)
+//#define EVENT_WDT_MQTTTASK   (1 << 4)
+#define EVENT_WDT_LCDTASK    (1 << 5)
+#define EVENT_WDT_RECTASK    (1 << 6)
+#define EVENT_WDT_SENDTASK   (1 << 7)
+extern struct rt_event WDTEvent;
+#endif
+//阿里云ip 47.103.184.125 port 1883
+			      //设备 temp_test001
+//花生壳 内网穿透  115.236.153.174  15260
 extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart5;
 extern UART_HandleTypeDef huart1;

@@ -438,6 +438,11 @@
               <FileType>1</FileType>
               <FilePath>.\applications\autoCtrlTask.c</FilePath>
             </File>
+            <File>
+              <FileName>wdtTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\wdtTask.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -992,6 +997,11 @@
               <FileName>stm32f4xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

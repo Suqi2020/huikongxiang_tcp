@@ -327,19 +327,9 @@ void   upKeepStateTask(void *para)
 				timeOutRunFun();
 				timeInc();
 				rt_thread_mdelay(1000);
-		}
-}
-#else
-void   upKeepStateTask(void *para)
-{
-
-		while(1){
-			  if(gbNetState==RT_TRUE)
-						rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER); 
-				rt_thread_mdelay(60*1000);
-				memset(packBuf,0,sizeof(packBuf));
-				packBuf[0]=0xd0;
-				packBuf[1]=0x00;
+#ifdef  USE_WDT
+			  rt_event_send(&WDTEvent,EVENT_WDT_UPTASK);
+#endif		  
 		}
 }
 

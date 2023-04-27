@@ -160,10 +160,11 @@
 //         修复下行设置逻辑控制超过20条导致程序死机 logCrtlAddResp(cJSON *Json)加入逻辑控制总数判断
 //V1.03    修复串口数据过多导致rt_smem_free err的问题  LENTH <MSGPOOL_LEN 导致buf溢出  
 //         增加一分钟刷新一次传感器状态和网络状态的显示 LCDTask.C中
-#define APP_VER       ((1<<8)+03)//0x0105 表示1.5版本
+//V1.04    增加WDT
+#define APP_VER       ((1<<8)+04)//0x0105 表示1.5版本
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230426";
+const char date[]="20230427";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -177,10 +178,23 @@ extern  rt_sem_t  w5500Iqr_semp ;//w5500有数据时候中断来临
 //互斥信号量定义
 rt_mutex_t   read485_mutex=RT_NULL;//防止多个线程同事读取modbus数据
 //邮箱的定义
-extern struct  rt_mailbox mbNetRecData;
-extern struct  rt_mailbox mbNetSendData;
-static char	 	 mbRecPool[20];//接收缓存20条
+extern struct  rt_mailbox mbNetSendData;;
 static char 	 mbSendPool[20];//发送缓存20条
+static char 	 mbRecPool[20];//发送缓存20条
+extern struct rt_mailbox mbNetRecData;
+
+
+
+/* 事件控制块 */
+struct rt_event mqttAckEvent;
+ 
+
+#ifdef USE_WDT
+struct rt_event WDTEvent;
+#endif
+
+
+
 
 
 //队列的定义
@@ -194,9 +208,10 @@ extern  void   w5500Task(void *parameter);//w5500网络状态的维护
 extern  void   hardWareDriverTest(void);
 extern  void   LCDTask(void *parameter);
 extern  void   autoCtrlTask(void *para);
-const static char sign[]="[main]";
-//const char errStr[]="[ERR]";
 
+extern  void   WDTTask(void *parameter);
+const  static char sign[]="[main]";
+extern rt_bool_t gbNetState;
 
 /* 定时器的控制块 */
 static rt_timer_t timer1;
@@ -327,6 +342,13 @@ int main(void)
         rt_kprintf("%sinit mailbox NetSend failed.\n",sign);
         return -1;
     }
+#ifdef  USE_WDT   
+		if (rt_event_init(&WDTEvent, "WDTEvent", RT_IPC_FLAG_FIFO) != RT_EOK)
+    {
+        rt_kprintf("%sinit WDTEvent failed.\n",sign);
+
+    }
+#endif
 		
 
 ////////////////////////////////任务////////////////////////////////////
@@ -362,6 +384,18 @@ int main(void)
 				rt_thread_startup(tidAutoCtrl);													 
 				rt_kprintf("%sRTcreat autoCtrlTask\r\n",sign);
 		}
+#ifdef  USE_WDT
+		extern IWDG_HandleTypeDef hiwdg;
+		static    rt_thread_t tidWDT      = RT_NULL;
+		tidWDT =  rt_thread_create("WDT",WDTTask,RT_NULL,256,10, 10 );
+		if(tidWDT!=NULL){
+				rt_thread_startup(tidWDT);													 
+				rt_kprintf("%sRTcreat WDTTask\r\n",sign);
+		}
+	
+
+		HAL_IWDG_Refresh(&hiwdg);
+#endif	
 		//队列初始化之后再开启串口中断接收
 //		char test[50]={0};
 //			uint32_t a=4294967290;

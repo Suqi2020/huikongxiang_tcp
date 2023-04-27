@@ -53,7 +53,7 @@ void   netDataRecTask(void *para)
 	
 	  uint8_t *str=RT_NULL;
 		while(1){
-			 if (rt_mb_recv(&mbNetRecData, (rt_ubase_t *)&str, RT_WAITING_FOREVER) == RT_EOK)
+			 if (rt_mb_recv(&mbNetRecData, (rt_ubase_t *)&str, 1000) == RT_EOK)
 			 {
 		#if 1
 					 uint16_t  lenth= netDataCheck(str);
@@ -64,6 +64,9 @@ void   netDataRecTask(void *para)
 					 netDataCheckp(str);
 		#endif	
 			 }
+#ifdef  USE_WDT
+			rt_event_send(&WDTEvent,EVENT_WDT_RECTASK);
+#endif
 
 		}
 }

@@ -49,23 +49,26 @@ void  LCDTask(void *parameter)
 	  int dispCount=0;
 		while(1){
 			
-			if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){
-				  revLen++;
-					while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 2) == RT_EOK){
-						 revLen++;
-					}
-			}
-			if(revLen){
-					 LCDDispConfig(recLCDBuf,revLen);
-					 revLen=0;
-			}
-			if(++dispCount>=60){
-				  dispCount=0;
-					LCDDispNetErrState();
-					LCDDispErrModbusGet();
-					LDCDispErrMosbusInfo();
-					LCDDispErrMosbusState();
-			}
+				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){
+						revLen++;
+						while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 2) == RT_EOK){
+							 revLen++;
+						}
+				}
+				if(revLen){
+						 LCDDispConfig(recLCDBuf,revLen);
+						 revLen=0;
+				}
+				if(++dispCount>=60){
+						dispCount=0;
+						LCDDispNetErrState();
+						LCDDispErrModbusGet();
+						LDCDispErrMosbusInfo();
+						LCDDispErrMosbusState();
+				}
+#ifdef  USE_WDT
+				rt_event_send(&WDTEvent,EVENT_WDT_LCDTASK);
+#endif
 		}
 }
 

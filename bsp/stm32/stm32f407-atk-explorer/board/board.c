@@ -47,6 +47,9 @@ static void MX_UART5_Init(void);
 //static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_SPI1_Init(void);
+#ifdef USE_WDT
+static void MX_IWDG_Init(void);
+#endif
 /* USER CODE BEGIN PFP */
 
 /**
@@ -67,6 +70,9 @@ void cubeHardWareInit(void)
 //  MX_USART6_UART_Init(9600);
   MX_ADC1_Init();
   MX_SPI1_Init();
+#ifdef USE_WDT
+	MX_IWDG_Init();
+#endif
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -75,6 +81,39 @@ void cubeHardWareInit(void)
   /* USER CODE BEGIN WHILE */
   /* USER CODE END 3 */
 }
+
+
+/**
+  * @brief IWDG Initialization Function
+  * @param None
+  * @retval None
+  */
+//喂狗 HAL_IWDG_Refresh("&hiwdg");
+#ifdef USE_WDT
+IWDG_HandleTypeDef hiwdg;  //看门狗最大32秒复位
+static void MX_IWDG_Init(void)
+{
+
+  /* USER CODE BEGIN IWDG_Init 0 */
+
+  /* USER CODE END IWDG_Init 0 */
+
+  /* USER CODE BEGIN IWDG_Init 1 */
+
+  /* USER CODE END IWDG_Init 1 */
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Reload = 4095;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN IWDG_Init 2 */
+
+  /* USER CODE END IWDG_Init 2 */
+
+}
+#endif
 /**
   * @brief System Clock Configuration
   * @retval None
