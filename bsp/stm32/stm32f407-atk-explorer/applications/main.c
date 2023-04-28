@@ -161,10 +161,11 @@
 //V1.03    修复串口数据过多导致rt_smem_free err的问题  LENTH <MSGPOOL_LEN 导致buf溢出  
 //         增加一分钟刷新一次传感器状态和网络状态的显示 LCDTask.C中
 //V1.04    增加WDT
-#define APP_VER       ((1<<8)+04)//0x0105 表示1.5版本
+//V1.05    增加LCD显示复位和保存成功窗口
+#define APP_VER       ((1<<8)+05)//0x0105 表示1.5版本
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230427";
+const char date[]="20230428" ;
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;

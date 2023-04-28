@@ -47,6 +47,9 @@ void  LCDTask(void *parameter)
   	LDCDispMosbusInfo();
 	  int revLen=0;
 	  int dispCount=0;
+	
+    extern void LCDDispRstOK();
+		LCDDispRstOK();
 		while(1){
 			
 				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){

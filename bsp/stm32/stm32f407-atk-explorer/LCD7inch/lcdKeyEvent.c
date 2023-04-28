@@ -48,9 +48,12 @@ void  dispLevelState(char level);
 bool levelRead(void);
 void levelSet(char level);
 void  lcdInputConfig(void);
-void  dispInput(void);
+void	LCDClearSaveOK();
+void	LCDClearRstOK();
 
+void LCDDispSaveOK();
 
+void LCDDispRstOK();
 void getInputTotalNum(void);
 void 	dispInput(void);
 void 	lastInput(void);
@@ -123,9 +126,13 @@ void  keyReturn(uint16_t keyAddr)
 				stm32_flash_erase(FLASH_IP_SAVE_ADDR, sizeof(packFlash));//每次擦除128k字节数据 存储时候需要一起存储
 				stm32_flash_write(FLASH_IP_SAVE_ADDR,(uint8_t*)&packFlash,sizeof(packFlash));
 				stm32_flash_write(FLASH_MODBUS_SAVE_ADDR,(uint8_t*)&sheet,sizeof(sheet));
+			  LCDDispSaveOK();
+		
 				break;
 			case KEY_RESET_ADDR://复位
-				rt_hw_cpu_reset();
+				
+			  //LCDDispRstOK();
+			  rt_hw_cpu_reset();
 				break;
 			case KEY_MODBUS_CFG_WATCH_ADDR:
 
@@ -334,6 +341,11 @@ void  keyReturn(uint16_t keyAddr)
 
 			case  KEY_OUTPUT_READ_RETURN_P_ADDR:
 				break;
+			case KEY_RETURN_ADDR:
+
+				LCDClearSaveOK();
+				LCDClearRstOK();
+				break;
 			///////////output_end///////////////
 //#define        KEY_ANA_SUBNAME_INTERFACE_ADDR     0x522C
 //#define        KEY_ANA_SURE_ADDR     0x522E
@@ -407,6 +419,8 @@ void lcdCopyAnaModel(uint8_t *rec);
 void lcdCopyAnaPort(uint8_t *rec);
 //拷贝输入的time到AnaInput中
 void lcdCopyAnaTime(uint8_t *rec);
+
+
 //lcd 发来的配置解析
 void LCDDispConfig(uint8_t *recBuf,int len)
 {
@@ -551,6 +565,7 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 			case DISP_OUTPUT_PORT_ADDR:
 				lcdCopyOutputPort(recBuf);
 				break;
+
 #ifndef     ANA_MASK
 			case DISP_ANA_ID_ADDR:
 				lcdCopyAnaID(recBuf);
@@ -566,5 +581,41 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 				break;
 #endif
 		}
+}
+
+void LCDClearSaveOK()
+{
+	 uint8_t buf[2];
+	 buf[0]=0xff;
+	 buf[1]=0xff;
+	
+	 LCDWtite(KEY_SAVEOK_ADDR,buf,10);
+}
+
+void LCDDispSaveOK()
+{
+	 uint8_t buf[12]="SAVE SUCC";
+	 buf[11]=0xff;
+	 buf[10]=0xff;
+	
+	 LCDWtite(KEY_SAVEOK_ADDR,buf,10);
+}
+
+void LCDClearRstOK()
+{
+	 uint8_t buf[2];
+	 buf[0]=0xff;
+	 buf[1]=0xff;
+	
+	 LCDWtite(KEY_RESETOK_ADDR,buf,10);
+}
+
+void LCDDispRstOK()
+{
+	 uint8_t buf[13]="RESET SUCC";
+	 buf[11]=0xff;
+	 buf[12]=0xff;
+	
+	 LCDWtite(KEY_RESETOK_ADDR,buf,10);
 }
 
