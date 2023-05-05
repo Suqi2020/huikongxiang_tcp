@@ -73,7 +73,7 @@
 #include "modbusConfig.h"
 //#include "utf_8.h"
 
-#define  USE_WDT
+//#define  USE_WDT
 
 #define  PACK_HEAD_LEN  4
 

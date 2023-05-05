@@ -300,7 +300,7 @@
 #define   LCD_WRITE      0X82
 #define   LCD_READ       0X83
 #define   LCD_RUN        0X4F4B
-#define   LCD_BUF_LEN    50
+#define   LCD_BUF_LEN    100
 
 
 #define  KEY_ADDR  			0X0000

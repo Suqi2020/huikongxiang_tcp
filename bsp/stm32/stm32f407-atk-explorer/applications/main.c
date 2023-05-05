@@ -162,10 +162,17 @@
 //         增加一分钟刷新一次传感器状态和网络状态的显示 LCDTask.C中
 //V1.04    增加WDT
 //V1.05    增加LCD显示复位和保存成功窗口
-#define APP_VER       ((1<<8)+05)//0x0105 表示1.5版本
+//V1.06    修复内存溢出导致的(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue) assertion failed at function:rt_mq_recv,
+//					内存溢出代码 
+//			                 if(offLine.times<sizeof(offLine.relayTimer)/sizeof(offLine.relayTimer[0]))（增加）
+//                          {offLine.times++;
+//					               	offLine.relayTimer[offLine.times]=rt_tick_get()/1000;}
+//         增加LCDWtite 互斥信号量保护
+//         LCDDataSend中发送完毕增加5ms延时 将2个相邻数据包分包 否则lcd屏识别不出
+#define APP_VER       ((1<<8)+06)//0x0105 表示1.5版本
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230428" ;
+const char date[]="20230505" ;
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -178,6 +185,7 @@ static    rt_thread_t tidAutoCtrl = RT_NULL;
 extern  rt_sem_t  w5500Iqr_semp ;//w5500有数据时候中断来临
 //互斥信号量定义
 rt_mutex_t   read485_mutex=RT_NULL;//防止多个线程同事读取modbus数据
+rt_mutex_t   lcdSend_mutex=RT_NULL;//防止多个线程同事往lcd发数据
 //邮箱的定义
 extern struct  rt_mailbox mbNetSendData;;
 static char 	 mbSendPool[20];//发送缓存20条
@@ -317,6 +325,11 @@ int main(void)
 		//创建485设备用到的互斥 队列
 		read485_mutex= rt_mutex_create("read485_mutex", RT_IPC_FLAG_FIFO);
 		if (read485_mutex == RT_NULL)
+    {
+        rt_kprintf("%screate read485_mutex failed\n",sign);
+    }
+		lcdSend_mutex= rt_mutex_create("lcdSend_mutex", RT_IPC_FLAG_FIFO);
+		if (lcdSend_mutex == RT_NULL)
     {
         rt_kprintf("%screate read485_mutex failed\n",sign);
     }

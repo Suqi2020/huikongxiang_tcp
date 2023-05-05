@@ -707,10 +707,10 @@ void UART5_IRQHandler(void)
 		uint8_t Res=0;
 		if((__HAL_UART_GET_FLAG(&huart5,UART_FLAG_RXNE)!=RESET))  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 		{
-			  //rt_kprintf("read\n");
+			  
 				HAL_UART_Receive(&huart5,&Res,1,1000); 
+//			  rt_kprintf("*%02x*\n",Res);
 			  rt_mq_send(&LCDmque,&Res,1);
-			  //HAL_UART_Transmit(&huart5,&Res,1,1000); 
 		}
 		HAL_UART_IRQHandler(&huart5);	
 #endif

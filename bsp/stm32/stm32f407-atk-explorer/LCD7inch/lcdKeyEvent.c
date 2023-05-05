@@ -170,6 +170,7 @@ void  keyReturn(uint16_t keyAddr)
 			case  KEY_NETERROR_ADDR:
 				//rt_kprintf("%s按键按下\n",sign);
 				LCDDispNetOffline();
+		  	LCDDispNetErrState();
 				break;
 			case  KEY_MODBUSERR_ADDR:{
 				LCDDispErrModbusGet();
@@ -180,11 +181,12 @@ void  keyReturn(uint16_t keyAddr)
 			case	NET_OFFLINE_LAST_ADDR:
 				offLineIndexLow();
 				LCDDispNetOffline();
+			  LCDDispNetErrState();
 				break;
 			case  NET_OFFLINE_NEXT_ADDR:
-
 				offLineIndexAdd();
 				LCDDispNetOffline();
+			  LCDDispNetErrState();
 				break;
 			case  KEY_SWITCH_INTERFACE_ADDR:
 				rt_kprintf("%sKEY_SWITCH_INTERFACE_ADDR \n",sign);
@@ -425,12 +427,23 @@ void lcdCopyAnaTime(uint8_t *rec);
 void LCDDispConfig(uint8_t *recBuf,int len)
 {
 	  
+	
+
+		
+		
 		if((uint16_t)((recBuf[0]<<8)+recBuf[1])!=LCD_HEAD){
 				rt_kprintf("%s head err\n",sign);
 				return;
 		}			
 		if((uint16_t)(recBuf[2]+2+1)!=len){//+2+1  头部长度2 数据长度1
-			  rt_kprintf("%s lenth err\n",sign);
+			 // rt_kprintf("%s lenth err\n",sign);
+			
+			
+			
+				if((recBuf[4]<<8)+recBuf[5]== LCD_RUN){
+						rt_kprintf("%sLCD resp\n",sign);
+				}
+						
 				return;
 		}	
 		if(recBuf[3]!=LCD_READ){//+2+1  头部长度2 数据长度1

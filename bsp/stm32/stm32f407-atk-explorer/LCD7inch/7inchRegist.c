@@ -25,6 +25,7 @@ static void LCDDataSend(uint8_t *buf,int lenth)
 		 HAL_UART_Transmit(&huart5,buf+i,1,1000); 
 		 //rt_kprintf("%02x ",buf[i]);
 	 }
+	 rt_thread_mdelay(5);//两个相邻数据包 分包
 	 //rt_kprintf("\n");
 	
 }
@@ -56,10 +57,11 @@ static int LCDWriteResp(uint8_t *recBuf,int lenth)
 //结果 return 0 无响应  1 正常响应 
 int LCDWtite(uint16_t addr,uint8_t *data,uint8_t dataLen)
 {
-	  //data pack
+		extern rt_mutex_t   lcdSend_mutex;
+		rt_mutex_take(lcdSend_mutex,RT_WAITING_FOREVER);
 	  int len=0;
 		rt_memset(sendLCDBuf,0,LCD_BUF_LEN);
-		rt_memset(recLCDBuf,0,LCD_BUF_LEN);
+//		rt_memset(recLCDBuf,0,LCD_BUF_LEN);
 		sendLCDBuf[len++]=(uint8_t)(LCD_HEAD>>8);
 	  sendLCDBuf[len++]=(uint8_t)LCD_HEAD;		
 	  sendLCDBuf[len++]=dataLen+2+1;						//长度暂时填充0  2-headlen 1-writelen
@@ -69,26 +71,29 @@ int LCDWtite(uint16_t addr,uint8_t *data,uint8_t dataLen)
 	  for (int i=0;i<dataLen;i++){
 				sendLCDBuf[len++]=data[i];
 		}
-    int repTimes=2;
-		while(repTimes--){
+//    int repTimes=2;
+//		while(repTimes--){
 			//data send
-				LCDDataSend(sendLCDBuf,len);
+//		rt_kprintf("%s fa:",sign);
 //		for(int i=0;i<len;i++){//ACUID_LEN
 //			 	rt_kprintf("%0x ",sendLCDBuf[i]);
 //		}
+
+		LCDDataSend(sendLCDBuf,len);
+		rt_mutex_release(lcdSend_mutex);
 //		rt_kprintf("%\n ");
 			//data rec
-				int revLen=0;
-				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 25) == RT_EOK){
-					revLen++;
-				}
-				while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 2) == RT_EOK){
-					revLen++;
-				}
-				if(revLen){
-					return LCDWriteResp(recLCDBuf,revLen);
-				}
-		}
+//				int revLen=0;
+//				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 25) == RT_EOK){
+//					revLen++;
+//				}
+//				while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 2) == RT_EOK){
+//					revLen++;
+//				}
+//				if(revLen){
+//					return LCDWriteResp(recLCDBuf,revLen);
+//				}
+//		}
 		return 0;
 }
 
@@ -288,7 +293,7 @@ void  LCDDispNetOffline()
 				buf[3]=(uint8_t)(offTime>>0);
 				LCDWtite(NET_OFFLINE_RELAYTIME_ADDR,buf,2*2);
 		}
-		LCDDispNetErrState();
+		
 }
 
 

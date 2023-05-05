@@ -190,11 +190,12 @@ void loopback_tcps(SOCKET s, uint16 port)
 void loopback_tcp(uint16 port)
 {
 	 uint16 netRxBufLen=0;	
-	
+	 extern rt_bool_t gbNetState;
 	switch(getSn_SR(SOCK_TCPC))								  				         /*获取socket的状态*/
 	{
 		case SOCK_CLOSED:											        		         /*socket处于关闭状态*/
 			socket(SOCK_TCPC,Sn_MR_TCP,port,Sn_MR_ND);
+		  gbNetState=RT_FALSE;
 		  rt_kprintf("SOCK_CLOSED\n");
 		  break;
 		case SOCK_INIT:													        	         /*socket处于初始化状态*/

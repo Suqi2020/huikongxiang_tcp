@@ -935,7 +935,7 @@ void dispChinaNameIndexLow()
 }
 void dispChinaNameIndexAdd()
 {
-		if(chinaNameIndex==(MODBUS_NUM-1))
+		if(chinaNameIndex>=(MODBUS_NUM-1))
 				chinaNameIndex=0;
 		else
 				chinaNameIndex++;

@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>612</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134430906</Address>
+          <Address>134429394</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>602</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134430844</Address>
+          <Address>134429332</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>604</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134430866</Address>
+          <Address>134429354</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -201,6 +201,38 @@
           <Filename>.\modbus\modbusConfig.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rt_thread\modbus/modbusConfig.c\604</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>347</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134427926</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>applications\NetJsonDataUpTask.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rt_thread\applications/NetJsonDataUpTask.c\347</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>75</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134425690</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>applications\NetJsonDataUpTask.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rt_thread\applications/NetJsonDataUpTask.c\75</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -364,6 +396,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>limit</ItemText>
         </Ww>
+        <Ww>
+          <count>32</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>offLine</ItemText>
+        </Ww>
+        <Ww>
+          <count>33</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>LCDmque</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -381,7 +423,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>200068A0</ItemText>
+          <ItemText>0X20000600</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -391,7 +433,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>

@@ -71,8 +71,9 @@ static int timeOut()
 	  for(int i=0;i<TIM_NUM;i++){
 				if(tim[i].count!=0xFFFF){
 						if(tim[i].count>=tim[i].threshoVal){
+	
 							timeStart((upDataTimEnum)i);
-							//rt_kprintf("tim out %d %d\n",i,tim[i].threshoVal);
+							//rt_kprintf("tim out %d %d\n",i,10);
 							return i;
 						}
 				}
@@ -267,6 +268,24 @@ void startTimeList()
     for(int k=0;k<TIM_NUM;k++){
 			timeStop((upDataTimEnum)k);
 		}
+		
+		#if 0
+		timeInit(HEART_TIME,      120,2);//心跳定时  定时30秒 第一次28秒就来
+		timeInit(REG_TIME,        5,0);//注册 注册成功后定时器就关闭
+		timeInit(CIRCULA_TIME, 		5,5);
+		timeInit(PARTDISCHAG_TIME,5,10);
+		timeInit(PRESSSETTL_TIME, 8,15);
+		timeInit(THREEAXIS_TIME,  8,20);
+//	  timeInit(H2S_TIME, 				sheet.h2sColTime,24);
+//		timeInit(CH4_TIME, 				sheet.ch4ColTime,28);
+//		timeInit(O2_TIME, 				sheet.o2ColTime,30);
+
+		timeInit(GAS_TIME, 				10,35);
+
+		timeInit(TEMPHUM_TIME, 		12,40);
+		timeInit(WATERDEPTH_TIME, 15,45);
+		timeInit(CRACKMETER_TIME, 16,50);
+		#else 
 		timeInit(HEART_TIME,      120,2);//心跳定时  定时30秒 第一次28秒就来
 		timeInit(REG_TIME,        5,0);//注册 注册成功后定时器就关闭
 		timeInit(CIRCULA_TIME, 		sheet.cirCulaColTime,5);
@@ -282,6 +301,7 @@ void startTimeList()
 		timeInit(TEMPHUM_TIME, 		sheet.tempHumColTime,40);
 		timeInit(WATERDEPTH_TIME, sheet.waterDepthColTime,45);
 		timeInit(CRACKMETER_TIME, sheet.crackMeterColTime,50);
+		#endif
 	  //启动温湿度
 #ifndef     ANA_MASK
 	  for(int i=0;i<ANALOG_NUM;i++){

@@ -30,7 +30,9 @@ void  uartMutexQueueCreate()
 //					}
 //////////////////////////////////消息队列/////////////////////////////////
 					sprintf(str,"uart%dMsgque",i);
-					int result = rt_mq_init(&uartmque[i],str,uartQuePool+i,1,MSGPOOL_LEN,RT_IPC_FLAG_FIFO);       
+					int result = rt_mq_init(&uartmque[i],str,uartQuePool+i,1,MSGPOOL_LEN,RT_IPC_FLAG_FIFO);  		
+//			  	int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);   
+//					 result = rt_mq_init(&uartmque[i],str,&uartQuePool[i][0],1,MSGPOOL_LEN,RT_IPC_FLAG_FIFO);  						 
 					if (result != RT_EOK)
 					{
 							rt_kprintf("%sinit uart%dmsgque failed.\n",sign,i);

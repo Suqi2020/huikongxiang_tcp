@@ -205,7 +205,7 @@ uint16 send(SOCKET s, const uint8 * buf, uint16 len)
 //		 break;//不管有多大就跳出  add by suqi 20221017
 //		#endif
   } while (freesize < ret);
-printf("SEND 001 %d %d\r\n",freesize,ret);//0 2048
+//printf("SEND 001 %d %d\r\n",freesize,ret);//0 2048
   // copy data
   send_data_processing(s, (uint8 *)buf, ret);
   IINCHIP_WRITE( Sn_CR(s) ,Sn_CR_SEND);
