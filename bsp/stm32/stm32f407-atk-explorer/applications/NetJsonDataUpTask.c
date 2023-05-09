@@ -28,9 +28,10 @@ static timerStru tim[TIM_NUM];
 
 
 //启动从0开始计时
-static void timeStart(upDataTimEnum num)
+static void timeRestart(upDataTimEnum num)
 {
-		tim[num].count=0;
+	  
+				tim[num].count=0;
 }
 //初始化后会自动运行
 //num 第几个定时器
@@ -42,7 +43,7 @@ static void timeStart(upDataTimEnum num)
 				rt_kprintf("%stim[%d] inint failed \n",task,num);
 				return;
 		}
-	//	rt_kprintf("tim init %d %d\n",num,value);
+		rt_kprintf("tim init %d %d\n",num,value);
 		tim[num].threshoVal=value;
 		tim[num].count=firstCnt;
 }
@@ -55,6 +56,14 @@ static void timeInc()
 		}
 }
 
+
+static void timeQuckIncSet()
+{
+	  for(int i=0;i<TIM_NUM;i++){
+			  tim[i].count=0xF000+i*2;
+
+		}
+}
 //停止
  void timeStop(upDataTimEnum num)
 {
@@ -69,12 +78,16 @@ static void timeInc()
 static int timeOut()
 {
 	  for(int i=0;i<TIM_NUM;i++){
-				if(tim[i].count!=0xFFFF){
-						if(tim[i].count>=tim[i].threshoVal){
-	
-							timeStart((upDataTimEnum)i);
-							//rt_kprintf("tim out %d %d\n",i,10);
-							return i;
+				if(tim[i].threshoVal!=0){
+						if(tim[i].count!=0xFFFF){
+								if(tim[i].count>=tim[i].threshoVal){
+			
+									timeRestart((upDataTimEnum)i);
+									rt_kprintf("tim out %d %d\n",i,10);
+									rt_kprintf("[%d %d]\n",tim[i].threshoVal,tim[i].count);
+
+									return i;
+								}
 						}
 				}
 		}
@@ -288,6 +301,7 @@ void startTimeList()
 		#else 
 		timeInit(HEART_TIME,      120,2);//心跳定时  定时30秒 第一次28秒就来
 		timeInit(REG_TIME,        5,0);//注册 注册成功后定时器就关闭
+
 		timeInit(CIRCULA_TIME, 		sheet.cirCulaColTime,5);
 		timeInit(PARTDISCHAG_TIME,sheet.partDischagColTime,10);
 		timeInit(PRESSSETTL_TIME, sheet.pressSetlColTime,15);
@@ -315,6 +329,7 @@ void startTimeList()
 				}
 		}
 #endif
+		timeQuckIncSet();
 }
 
 //char nihao[]="你好局放防沉降防外破";

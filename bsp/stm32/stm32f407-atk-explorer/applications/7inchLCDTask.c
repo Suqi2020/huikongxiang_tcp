@@ -1,6 +1,7 @@
 
 #include   "board.h"
-
+//5A A5 0B 82 009C 5AA5 17 03 1E 0F 2A 00 
+//时间配置      17 03 1E 0F 2A 00  为年月日时分秒配置
 extern struct  rt_messagequeue LCDmque;
 extern void LCDDispIP(void);
 extern void LCDDispUart(void);
@@ -65,11 +66,11 @@ void  LCDTask(void *parameter)
 				}
 				if(++dispCount>=60){
 						dispCount=0;
-//						LCDDispNetOffline();
-//						LCDDispNetErrState();
-//						LCDDispErrModbusGet();
-//						LDCDispErrMosbusInfo();
-//						LCDDispErrMosbusState();
+						LCDDispNetOffline();
+						LCDDispNetErrState();
+						LCDDispErrModbusGet();
+						LDCDispErrMosbusInfo();
+						LCDDispErrMosbusState();
 				}
 #ifdef  USE_WDT
 				rt_event_send(&WDTEvent,EVENT_WDT_LCDTASK);

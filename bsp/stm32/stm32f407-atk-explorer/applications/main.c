@@ -13,6 +13,24 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <string.h>
+
+/*
+=============================================================================================
+
+    //Total RO  Size (Code + RO Data)               270044 ( 263.71kB)
+    Total RW  Size (RW Data + ZI Data)             73696 (  71.97kB)
+    Total ROM Size (Code + RO Data + RW Data)     270376 ( 264.04kB)
+		[10:27:11.390]收←◆free
+		total    : 57296
+		used     : 13228
+		maximum  : 23920
+		available: 44068
+		RAM:占用 71.97（变量编译后）+12.92（操作系统malloc）=84.88k 剩余43.03K  剩余量 33.6%
+		ROM:占用:264.04k +参数保存占用最后一个128K 总共392.04k  剩余量61.8%
+=============================================================================================
+
+
+*/
 //https://github.com/Suqi2020/huikongxiang_env.git
 //0V1   20220919
 //初始化  没有加入版本管理 
@@ -169,10 +187,11 @@
 //					               	offLine.relayTimer[offLine.times]=rt_tick_get()/1000;}
 //         增加LCDWtite 互斥信号量保护
 //         LCDDataSend中发送完毕增加5ms延时 将2个相邻数据包分包 否则lcd屏识别不出
-#define APP_VER       ((1<<8)+06)//0x0105 表示1.5版本
+//V1.07    加入timeQuckIncSet() 给传感器一个初始值，快速测试传感器状态 2分钟内可以监测出故障传感器并显示
+#define APP_VER       ((1<<8)+07)//0x0105 表示1.5版本
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230505" ;
+const char date[]="20230509" ;
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
