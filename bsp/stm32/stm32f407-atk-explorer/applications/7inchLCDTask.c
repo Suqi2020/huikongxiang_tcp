@@ -61,7 +61,10 @@ void  LCDTask(void *parameter)
 				}
 				if(revLen){
 						 LCDDispConfig(recLCDBuf,revLen);
-					rt_kprintf("%srevLen:%d\n","[LCDTASK]",revLen);
+					   rt_kprintf("%srevLen:%d\n","[LCDTASK]",revLen);
+					   for(int j=0;j<revLen;j++)
+					     rt_kprintf("%02x ",recLCDBuf[j]);
+					rt_kprintf("\n ");
 						 revLen=0;
 				}
 				if(++dispCount>=60){

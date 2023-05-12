@@ -18,6 +18,7 @@ uint16_t saveMcuResp();
 uint16_t logCrtlReadResp(cJSON *Json);
 uint16_t logCrtlAddResp(cJSON *Json);
 uint16_t logCtrlDel(cJSON *Json);
+extern  void coverJsonOnOff(cJSON   *Json);
 const static char sign[]="[dataPhrs]";
 uint32_t  respMid=0;
 //数据校验 头尾 校验和 是否正确
@@ -194,7 +195,9 @@ void AllDownPhrase(char *data,int lenth)
 					case	PROPERTIES_485DATA_GET:
 					  readModbusDataResp(pkIdentf->valuestring);
 						break;
-
+					case  PROPERTIES_485DATA_SET:
+						coverJsonOnOff(Json);
+						break;
 					case	PROPERTIES_ANADATA_REP_RESP:
 						break;
 					case	PROPERTIES_ANADATA_GET:

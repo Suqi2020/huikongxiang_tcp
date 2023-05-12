@@ -188,10 +188,11 @@
 //         增加LCDWtite 互斥信号量保护
 //         LCDDataSend中发送完毕增加5ms延时 将2个相邻数据包分包 否则lcd屏识别不出
 //V1.07    加入timeQuckIncSet() 给传感器一个初始值，快速测试传感器状态 2分钟内可以监测出故障传感器并显示
-#define APP_VER       ((1<<8)+07)//0x0105 表示1.5版本
+//V1.08    增加井盖LCD显示控制  
+#define APP_VER       ((1<<8)+8)//0x0105 表示1.5版本
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230509" ;
+const char date[]="20230512";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -252,9 +253,11 @@ static void timeout1(void *parameter)
 		static int count=0;
 	  static int alarmTick=10;
 		extern rt_bool_t gbNetState;
-	  extern void modbusWorkErrCheck(void);
+	  extern void timeInc();
+	  //extern void modbusWorkErrCheck(void);
 	  count++;
-	  
+	  if(count%10==0)
+				timeInc();
 		if(gbNetState==RT_TRUE){
 				if(count%10==0){
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
@@ -385,21 +388,21 @@ int main(void)
 		
 
 ////////////////////////////////任务////////////////////////////////////
-    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,3, 10 );
-		if(tidW5500!=NULL){
-				rt_thread_startup(tidW5500);													 
-				rt_kprintf("%sRTcreat w5500Task task\r\n",sign);
-		}
-		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,2, 10 );
-		if(tidNetRec!=NULL){
-				rt_thread_startup(tidNetRec);													 
-				rt_kprintf("%sRTcreat netDataRecTask \r\n",sign);
-		}
-		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,2, 10 );
-		if(tidNetSend!=NULL){
-				rt_thread_startup(tidNetSend);													 
-				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
-		}
+//    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,3, 10 );
+//		if(tidW5500!=NULL){
+//				rt_thread_startup(tidW5500);													 
+//				rt_kprintf("%sRTcreat w5500Task task\r\n",sign);
+//		}
+//		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,2, 10 );
+//		if(tidNetRec!=NULL){
+//				rt_thread_startup(tidNetRec);													 
+//				rt_kprintf("%sRTcreat netDataRecTask \r\n",sign);
+//		}
+//		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,2, 10 );
+//		if(tidNetSend!=NULL){
+//				rt_thread_startup(tidNetSend);													 
+//				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
+//		}
 
 		
 		tidUpkeep 	=  rt_thread_create("upKeep",upKeepStateTask,RT_NULL,512*3,4, 10 );

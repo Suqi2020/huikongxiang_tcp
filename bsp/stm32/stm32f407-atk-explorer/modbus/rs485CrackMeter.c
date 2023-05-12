@@ -19,7 +19,7 @@ typedef struct{
 		uint8_t respStat;
 //float height;//除以10 传输float类型  单位mm
 }crackMeterStru;
-crackMeterStru crackMeter[CRACKMETER_485_NUM];
+static crackMeterStru crackMeter[CRACKMETER_485_NUM];
 //返回沉降仪的通讯状态 true--通讯成功 false--通讯失败
 int  crackMeterState(int i)
 {
@@ -302,7 +302,7 @@ bool modCrackMeterWarn2Send()
 		// 加入节点（键值对）
 		cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
 		cJSON_AddStringToObject(root, "packetType","EVENTS_485_ALARM");
-		cJSON_AddStringToObject(root, "identifier","crackmeter_monitor");
+		cJSON_AddStringToObject(root, "identifier","cover_monitor");
 		cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
 		char *sprinBuf=RT_NULL;
 		sprinBuf=rt_malloc(20);//20个字符串长度 够用了
@@ -321,8 +321,8 @@ bool modCrackMeterWarn2Send()
 							cJSON_AddItemToObject(nodeobj, "data", nodeobj_p);
 							cJSON_AddNumberToObject(nodeobj_p,"temperature_low_alarm",inpoutpFlag.modbusCrackMeter[i].tempLowFlag);//cJSON_CreateNumber("10"));
 							cJSON_AddNumberToObject(nodeobj_p,"temperature_high_alarm",inpoutpFlag.modbusCrackMeter[i].tempUpFlag);
-							cJSON_AddNumberToObject(nodeobj_p,"distance_low_alarm",inpoutpFlag.modbusCrackMeter[i].tempLowFlag);
-							cJSON_AddNumberToObject(nodeobj_p,"distancedistance_high_alarm",inpoutpFlag.modbusCrackMeter[i].tempUpFlag);		
+							cJSON_AddNumberToObject(nodeobj_p,"distance_low_alarm",inpoutpFlag.modbusCrackMeter[i].distancLowFlag);
+							cJSON_AddNumberToObject(nodeobj_p,"distance_high_alarm",inpoutpFlag.modbusCrackMeter[i].distancUpFlag);		
 							
 							sprintf(sprinBuf,"%llu",utcTime());
 							cJSON_AddItemToObject(nodeobj_p,"monitoringTime",cJSON_CreateString(sprinBuf));

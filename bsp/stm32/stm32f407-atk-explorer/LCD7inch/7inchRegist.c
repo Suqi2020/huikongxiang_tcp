@@ -78,7 +78,7 @@ int LCDWtite(uint16_t addr,uint8_t *data,uint8_t dataLen)
 //		for(int i=0;i<len;i++){//ACUID_LEN
 //			 	rt_kprintf("%0x ",sendLCDBuf[i]);
 //		}
-
+//   rt_kprintf("%\n ");
 		LCDDataSend(sendLCDBuf,len);
 		rt_mutex_release(lcdSend_mutex);
 //		rt_kprintf("%\n ");

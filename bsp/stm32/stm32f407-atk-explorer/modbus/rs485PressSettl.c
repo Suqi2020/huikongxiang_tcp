@@ -345,8 +345,8 @@ bool modPressSetlWarn2Send()
 							cJSON_AddItemToObject(nodeobj, "data", nodeobj_p);
 							cJSON_AddNumberToObject(nodeobj_p,"temperature_low_alarm",inpoutpFlag.modbusPreSettl[i].tempLowFlag);//cJSON_CreateNumber("10"));
 							cJSON_AddNumberToObject(nodeobj_p,"temperature_high_alarm",inpoutpFlag.modbusPreSettl[i].tempUpFlag);
-							cJSON_AddNumberToObject(nodeobj_p,"height_low_alarm",inpoutpFlag.modbusPreSettl[i].tempLowFlag);
-							cJSON_AddNumberToObject(nodeobj_p,"height_high_alarm",inpoutpFlag.modbusPreSettl[i].tempUpFlag);		
+							cJSON_AddNumberToObject(nodeobj_p,"height_low_alarm",inpoutpFlag.modbusPreSettl[i].heightLowFlag);
+							cJSON_AddNumberToObject(nodeobj_p,"height_high_alarm",inpoutpFlag.modbusPreSettl[i].heightUpFlag);		
 							
 							sprintf(sprinBuf,"%llu",utcTime());
 							cJSON_AddItemToObject(nodeobj_p,"monitoringTime",cJSON_CreateString(sprinBuf));

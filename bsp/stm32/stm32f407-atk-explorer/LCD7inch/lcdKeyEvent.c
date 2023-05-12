@@ -77,13 +77,20 @@ void  dispReadAna(void);
 void  lastReadAna(void);
 void  nextReadAna(void);
 
-
+void 	LCDClearClose(void);
+void	LCDClearOpen(void);
 
 
 void dispName(void);
 void dispSubName(void);
 void nextSubName(void);
 void lastSubName(void);
+void coverClose(void);
+void coverOpen(void);
+void coverLastDisp(void);
+void coverNextDisp(void);
+void coverNowDisp(void);
+void LCDDispNetErrState(void);
 #ifndef     ANA_MASK
 void lcdAnaConfig(void);
 void  delOneAna(void);
@@ -324,8 +331,25 @@ void  keyReturn(uint16_t keyAddr)
 				getOutputTotalNum();
 				dispoutputReadInterf();
 			  dispOutputRead();
-			
 				break;
+			//井盖
+			case KEY_COVER_OPEN_ADDR:
+				coverOpen();
+				break;
+			case KEY_COVER_CLOSE_ADDR:
+				coverClose();
+				break;			
+			case KEY_COVER_LAST_ADDR:
+				coverLastDisp();
+				break;			
+			case KEY_COVER_NEXT_ADDR:
+				coverNextDisp();
+				break;			
+			case KEY_COVER_DISPLAY_ADDR:
+				coverNowDisp();
+				break;
+
+			
 			case  KEY_OUTPUT_READ_INTERFACE_ADDR://进去接口
 				dispoutputReadInterf();
 				dispOutputRead();
@@ -347,6 +371,8 @@ void  keyReturn(uint16_t keyAddr)
 
 				LCDClearSaveOK();
 				LCDClearRstOK();
+				LCDClearClose();
+				LCDClearOpen();
 				break;
 			///////////output_end///////////////
 //#define        KEY_ANA_SUBNAME_INTERFACE_ADDR     0x522C

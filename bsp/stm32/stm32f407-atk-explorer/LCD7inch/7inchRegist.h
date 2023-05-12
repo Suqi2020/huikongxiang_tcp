@@ -283,13 +283,36 @@
 #define   KEY_SAVEOK_ADDR             0X1708
 #define   KEY_RESETOK_ADDR            0X1714
 #define   KEY_RETURN_ADDR             0X1706
+//井盖界面
+#define   TEXT_COVER_ID_ADDR         			0X1900
+#define   TEXT_COVER_OPENRESP_ADDR        0X1910
+#define   TEXT_COVER_CLOSERESP_ADDR       0X1918
+
+#define   DATA_COVER_ADDR_ADDR         		0X1920
+#define   DATA_COVER_TOTALPAGE_ADDR       0X1922
+#define   DATA_COVER_NOWPAGE_ADDR         0X1924
+
+#define   KEY_COVER_OPEN_ADDR         0X1926
+#define   KEY_COVER_CLOSE_ADDR        0X1928
+#define   KEY_COVER_LAST_ADDR         0X192A
+#define   KEY_COVER_NEXT_ADDR         0X192C
+
+
+//[09:27:21.942]收←◆[LCD] fa:5a a5 15 82 19 0 47 59 4e 4a 4c 58 53 44 30 30 30 30 30 30 36 38 34 ff 
+// [LCD] fa:5a a5 5 82 19 20 0 1 
+// [LCD] fa:5a a5 5 82 19 26 ff ff 
+// [LCD] fa:5a a5 5 82 19 28 ff ff 
+// [LCDTASK]revLen:9
+//5a a5 06 83 00 00 01 1a 16 
+//KEY_COVER_DISPLAY_ADDR
+
 
 //主界面
 #define   KEY_NETERROR_ADDR         0X1A00
 #define   KEY_MODBUSERR_ADDR        0X1A02
 //#define   NET_ERR_DISPLAY_ADDR      0X1A0C
 //#define   MODBUS_ERR_DISPLAY_ADDR   0X1A0E
-
+#define   KEY_COVER_DISPLAY_ADDR   0x1A16
 #define   NET_ERR_DISPLAY_ADDR      0X1A20
 #define   MODBUS_ERR_DISPLAY_ADDR   0X1A22
 //////////////////////////////////////////////////////////////

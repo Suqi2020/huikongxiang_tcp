@@ -170,6 +170,21 @@ void printModbusDevList()
 							}
 					}
 				break;
+				case COVER://增加井盖
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(sheet.cover[j].workFlag==RT_TRUE){
+									rt_kprintf("%s modbus ",sign);
+									rt_kprintf("%10s",modbusName[i]);
+								  rt_kprintf("(%d)",modbusBps[i]);
+			
+									rt_kprintf("%s ",sheet.cover[j].ID);
+									rt_kprintf("%s ",sheet.cover[j].model);
+									rt_kprintf("%s ",UartName[sheet.cover[j].useUartNum]);
+									rt_kprintf("%d ",sheet.cover[j].slaveAddr);
+									rt_kprintf("%d \n",sheet.coverColTime);
+							}
+					}
+				break;
 				default:
 				break;
 			}
@@ -324,7 +339,7 @@ static int crackMeterConf(int uartnum,char *argv[])
 			if(rt_strcmp(sheet.crackMeter[i].ID,argv[2])==0){//配置过
 					if((slaveAddr==0)||(slaveAddr==255)){//关闭
 							sheet.crackMeter[i].workFlag=RT_FALSE;//关闭
-						  rt_kprintf("%s del crackMeter\n",sign);
+						  rt_kprintf("%s del cover\n",sign);
 						  return 1;
 					}
 					else{
@@ -333,8 +348,8 @@ static int crackMeterConf(int uartnum,char *argv[])
 					sheet.crackMeter[i].slaveAddr=slaveAddr;	
 					sheet.crackMeter[i].useUartNum=UartNum[uartnum];
 					rt_strcpy(sheet.crackMeter[i].model,argv[3]);
-					rt_kprintf("%s crackMeter reconfig %d\n",sign,i);
-					rt_kprintf("%s crackMeter OK\n",sign);
+					rt_kprintf("%s cover reconfig %d\n",sign,i);
+					rt_kprintf("%s cover OK\n",sign);
 					ret =1;
 					break;
 			}
@@ -352,6 +367,54 @@ static int crackMeterConf(int uartnum,char *argv[])
 							rt_strcpy(sheet.crackMeter[j].ID,argv[2]);
 							rt_kprintf("%s crackMeter config %d\n",sign,j);
 						  rt_kprintf("%s crackMeter OK\n",sign);
+							ret =1;
+							break;
+					}
+			}
+	}
+	return ret;
+}
+
+
+
+static int coverConf(int uartnum,char *argv[])
+{
+	int i=0;
+	int ret=0;
+	int slaveAddr=atoi32(argv[5],10);
+	sheet.coverColTime=atoi32(argv[6],10);
+	for( i=0;i<COVER_485_NUM;i++){//核对有没有配置过
+			if(rt_strcmp(sheet.cover[i].ID,argv[2])==0){//配置过
+					if((slaveAddr==0)||(slaveAddr==255)){//关闭
+							sheet.cover[i].workFlag=RT_FALSE;//关闭
+						  rt_kprintf("%s del crackMeter\n",sign);
+						  return 1;
+					}
+					else{
+							sheet.cover[i].workFlag=RT_TRUE;//打开
+					}
+					sheet.cover[i].slaveAddr=slaveAddr;	
+					sheet.cover[i].useUartNum=UartNum[uartnum];
+					rt_strcpy(sheet.cover[i].model,argv[3]);
+					rt_kprintf("%s crackMeter reconfig %d\n",sign,i);
+					rt_kprintf("%s crackMeter OK\n",sign);
+					ret =1;
+					break;
+			}
+	}
+	if((slaveAddr==0)||(slaveAddr==255)){
+			return 0;
+	}
+	if(i==COVER_485_NUM){//没有配置过
+			for(int j=0;j<COVER_485_NUM;j++){
+					if(sheet.cover[j].workFlag!=RT_TRUE){
+							sheet.cover[j].workFlag=RT_TRUE;//打开
+							sheet.cover[j].slaveAddr=slaveAddr;	
+							sheet.cover[j].useUartNum=UartNum[uartnum];
+							rt_strcpy(sheet.cover[j].model,argv[3]);
+							rt_strcpy(sheet.cover[j].ID,argv[2]);
+							rt_kprintf("%s cover config %d\n",sign,j);
+						  rt_kprintf("%s cover OK\n",sign);
 							ret =1;
 							break;
 					}
@@ -726,6 +789,9 @@ static int modbusConf(int modbusnum,int uartnum,char *argv[])
 			break;
 			case CRACKMETER:
 				ret=crackMeterConf(uartnum,argv);
+			break;
+			case COVER:
+				ret=coverConf(uartnum,argv);
 			default:
 			break;
 		}
@@ -855,6 +921,17 @@ int modbusConfIDCheck(char *inputID)
 									if(rt_strcmp(sheet.crackMeter[j].ID,inputID)==0){
 											rt_kprintf("del crackMeter same ID\n");
 											sheet.crackMeter[j].workFlag=RT_FALSE;
+										  return 1;
+									}
+							}
+					}
+				break;
+				case COVER:
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(sheet.cover[j].workFlag==RT_TRUE){
+									if(rt_strcmp(sheet.cover[j].ID,inputID)==0){
+											rt_kprintf("del cover same ID\n");
+											sheet.cover[j].workFlag=RT_FALSE;
 										  return 1;
 									}
 							}

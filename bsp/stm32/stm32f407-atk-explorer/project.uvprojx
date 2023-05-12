@@ -863,6 +863,11 @@
               <FileType>1</FileType>
               <FilePath>.\LCD7inch\lcdDispTHCfg.c</FilePath>
             </File>
+            <File>
+              <FileName>lcdCoverCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdCoverCtrl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1102,6 +1107,11 @@
               <FileName>rs485CrackMeter.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\modbus\rs485CrackMeter.c</FilePath>
+            </File>
+            <File>
+              <FileName>rs485Cover.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus\rs485Cover.c</FilePath>
             </File>
           </Files>
         </Group>

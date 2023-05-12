@@ -546,6 +546,17 @@ uint16_t devRegJsonPack()
 							}
 					}
 				break;
+				case COVER:
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(sheet.cover[j].workFlag==RT_TRUE){
+									nodeobj = cJSON_CreateObject();
+									cJSON_AddItemToArray(Array, nodeobj);
+									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.cover[j].model));
+									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.cover[j].ID));
+							}
+					}
+				break;
 				default:
 				break;
 			}	

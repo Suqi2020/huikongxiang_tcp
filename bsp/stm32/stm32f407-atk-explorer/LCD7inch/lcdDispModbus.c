@@ -66,6 +66,11 @@ void delModbusDevbyID(char *ID)
 						sheet.crackMeter[modPosit[modbDevReadIndex].Y].workFlag=RT_FALSE;
 					  rt_kprintf("%sdel crackMeter\n %d",sign);
 						break;
+					case COVER:
+						sheet.cover[modPosit[modbDevReadIndex].Y].workFlag=RT_FALSE;
+					  rt_kprintf("%sdel cover\n %d",sign);
+						break;
+
 					default:
 						rt_kprintf("%serror delModbusDevbyID\n %d",sign,modPosit[modbDevReadIndex].X);
 						break;
@@ -243,6 +248,19 @@ void LCDDispErrModbusGet()
 					for(int j=0;j<CRACKMETER_485_NUM;j++){//核对有没有配置过
 							if(sheet.crackMeter[j].workFlag==RT_TRUE){
 								if(crackMeterState(j)!=1){
+											modPositErr[modbErrTotalIndex].X=i;
+											modPositErr[modbErrTotalIndex].Y=j;
+											modPositErr[modbErrTotalIndex].flag=1;
+											modbErrTotalIndex++;
+									}
+							}
+					}
+					break;
+				case COVER:
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(sheet.cover[j].workFlag==RT_TRUE){
+								extern int coverState(int i);
+								if(coverState(j)!=1){
 											modPositErr[modbErrTotalIndex].X=i;
 											modPositErr[modbErrTotalIndex].Y=j;
 											modPositErr[modbErrTotalIndex].flag=1;
@@ -439,6 +457,21 @@ void LCDDispModInfoCpy(modbusPositStru *posit,uint8_t readIndex,LCDDispModInfoSt
 									 lcdRead->port = sheet.crackMeter[posit_p.Y].useUartNum;
 									 lcdRead->addr = sheet.crackMeter[posit_p.Y].slaveAddr;
 									 lcdRead->colTime = sheet.crackMeterColTime;
+								 }
+								 break;
+							}
+					}
+					break;
+				case COVER:
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(posit_p.Y==j){
+								 if(posit_p.flag==1){
+									 rt_strcpy(lcdRead->name,modbusName[posit_p.X]);
+									 rt_strcpy(lcdRead->ID,  sheet.cover[posit_p.Y].ID);
+									 rt_strcpy(lcdRead->model,sheet.cover[posit_p.Y].model);
+									 lcdRead->port = sheet.cover[posit_p.Y].useUartNum;
+									 lcdRead->addr = sheet.cover[posit_p.Y].slaveAddr;
+									 lcdRead->colTime = sheet.coverColTime;
 								 }
 								 break;
 							}
@@ -831,6 +864,16 @@ void LCDDispModbusGet()
 				case CRACKMETER:
 					for(int j=0;j<CRACKMETER_485_NUM;j++){//核对有没有配置过
 							if(sheet.crackMeter[j].workFlag==RT_TRUE){
+								  modPosit[modbTotalIndex].X=i;
+								  modPosit[modbTotalIndex].Y=j;
+								  modPosit[modbTotalIndex].flag=1;
+									modbTotalIndex++;
+							}
+					}
+					break;
+				case COVER:
+					for(int j=0;j<COVER_485_NUM;j++){//核对有没有配置过
+							if(sheet.cover[j].workFlag==RT_TRUE){
 								  modPosit[modbTotalIndex].X=i;
 								  modPosit[modbTotalIndex].Y=j;
 								  modPosit[modbTotalIndex].flag=1;

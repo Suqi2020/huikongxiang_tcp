@@ -307,6 +307,37 @@ void printfThresholdList()
 				}
 				//rt_kprintf("\n");
 		}
+		for(i=0;i<COVER_485_NUM;i++){
+				if(sheet.cover[i].workFlag==RT_TRUE){//找到相同ID的
+						rt_kprintf("%s threshold ",sign);
+						rt_kprintf("%s ",modbusName[COVER]);
+						rt_kprintf("%s ",sheet.cover[i].ID);
+						rt_kprintf("1 ");
+						rt_kprintf("1 ");
+						rt_kprintf("%d ",sheet.modbusCover[i].inclineLowLimit);
+						rt_kprintf("%d \n",sheet.modbusCover[i].inclineUpLimit);
+					  rt_kprintf("\n");
+					
+						rt_kprintf("%s threshold ",sign);
+						rt_kprintf("%s ",modbusName[COVER]);
+						rt_kprintf("%s ",sheet.cover[i].ID);
+						rt_kprintf("1 ");
+						rt_kprintf("2 ");
+						rt_kprintf("%d ",sheet.modbusCover[i].switchLowLimit);
+						rt_kprintf("%d \n",sheet.modbusCover[i].switchUpLimit);
+					  rt_kprintf("\n");
+					
+						rt_kprintf("%s threshold ",sign);
+						rt_kprintf("%s ",modbusName[COVER]);
+						rt_kprintf("%s ",sheet.cover[i].ID);
+						rt_kprintf("1 ");
+						rt_kprintf("3 ");
+						rt_kprintf("%d ",sheet.modbusCover[i].vibrationLowLimit);
+						rt_kprintf("%d \n",sheet.modbusCover[i].vibrationUpLimit);
+					  rt_kprintf("\n");
+				}
+				//rt_kprintf("\n");
+		}
 		//打印modbus设置的阈值
 }
 //与modbus传感器不同之处在于 除了判断ID还需要判断子选项
@@ -565,6 +596,31 @@ bool   modbusThresholdConfig(int num,char *ID,int sensorSubName,float upLimit,fl
 								else if(sensorSubName==2){
 										sheet.modbusCrackMeter[i].distancUpLimit  = upLimit;
 									  sheet.modbusCrackMeter[i].distancLowLimit = lowLimit;
+									  return  true;
+								}
+								else
+										return  false;
+						}
+				}
+			  break;
+				
+				
+			case COVER:
+				for(i=0;i<COVER_485_NUM;i++){
+						if(rt_strcmp(sheet.cover[i].ID,ID)==0){//找到相同ID的
+								if(sensorSubName==1){
+										sheet.modbusCover[i].inclineUpLimit  = upLimit;
+									  sheet.modbusCover[i].inclineLowLimit = lowLimit;
+									  return  true;
+								}
+								else if(sensorSubName==2){
+										sheet.modbusCover[i].switchUpLimit  = upLimit;
+									  sheet.modbusCover[i].switchLowLimit = lowLimit;
+									  return  true;
+								}
+								else if(sensorSubName==3){
+										sheet.modbusCover[i].vibrationUpLimit  = upLimit;
+									  sheet.modbusCover[i].vibrationLowLimit = lowLimit;
 									  return  true;
 								}
 								else

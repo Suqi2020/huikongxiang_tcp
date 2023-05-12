@@ -66,13 +66,23 @@ typedef struct{
 	  float heightUpLimit;
 	  float heightLowLimit;
 }pressSettlStru_p;
-//modbus传感裂缝仪
+//modbus传感裂缝仪阈值
 typedef struct{
 	  float tempUpLimit;
 		float tempLowLimit;
 	  float distancUpLimit;
 	  float distancLowLimit;
 }crackMeterStru_p;
+//modbus井盖阈值
+typedef struct{
+	  uint8_t inclineUpLimit;
+	  uint8_t inclineLowLimit;
+	  uint8_t switchUpLimit;
+	  uint8_t switchLowLimit;
+	  uint8_t vibrationUpLimit;
+	  uint8_t vibrationLowLimit;
+	  uint8_t rev[2];
+}coverStru_p;
 typedef struct{
 		uint32_t  tempUpFlag;//阈值超限的标记
 		uint32_t  tempLowFlag;
@@ -87,6 +97,17 @@ typedef struct{
 		uint32_t  distancUpFlag;
 		uint32_t  distancLowFlag;
 }crackMeterFlagStru;
+
+
+typedef struct{
+	  uint8_t inclineUpFlag;
+	  uint8_t inclineLowFlag;
+	  uint8_t switchUpFlag;
+	  uint8_t switchLowFlag;
+	  uint8_t vibrationUpFlag;
+	  uint8_t vibrationLowFlag;
+	  uint8_t rev[2];
+}coverFlagStru;
 typedef struct
 {
 	  //环流值 放大了100倍
@@ -206,6 +227,7 @@ typedef struct{
 #define CIRCULA_485_NUM   	  5
 #define PARTDISCHAG_485_NUM   5
 #define CRACKMETER_485_NUM    20
+#define COVER_485_NUM         10
 #ifdef  USE_4GAS
 #define CH4_485_NUM   			  GAS_NUM
 #define CO_485_NUM   				  GAS_NUM
@@ -225,7 +247,8 @@ typedef struct{
 														O2_485_NUM+\
 														WATERDEPTH_485_NUM+\
 														TEMPHUM_485_NUM+\
-														CRACKMETER_485_NUM)
+														CRACKMETER_485_NUM+\
+														COVER_485_NUM)
 #else
 	#define TOTOLA_485_NUM     (THREEAXIS_485_NUM+\
 														PRESSSETTL_485_NUM+\
@@ -233,16 +256,17 @@ typedef struct{
 														PARTDISCHAG_485_NUM+\
 														WATERDEPTH_485_NUM+\
 														TEMPHUM_485_NUM+\
-														CRACKMETER_485_NUM)
+														CRACKMETER_485_NUM+\
+														COVER_485_NUM)
 #endif
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //modbus+设备名称(波特率)+端口(port1-port4)+设备地址(0-关闭设备)+采集间隔(秒)
 #ifdef  USE_4GAS
-#define   MODBUS_NUM      11
-#else
-#define   MODBUS_NUM      7
+#define   MODBUS_NUM      11+1 //加入井盖
+#else 
+#define   MODBUS_NUM      7+1 //加入井盖
 #endif
 typedef struct{
 	 void (* modbusRead)(void );
@@ -255,12 +279,12 @@ extern modbusFunStru modbusFun[MODBUS_NUM];
 typedef enum{
      CIRCULA=0, 	PARTDISCHAG,			PRESSSETTL, 			THREEAXIS,		\
    	CH4,		O2		,H2S,			CO,			\
-	  TEMPHUM,			WATERDEPTH,CRACKMETER
+	  TEMPHUM,			WATERDEPTH,CRACKMETER,COVER
 }modbNumEnum;
 #else
 typedef enum{
      CIRCULA=0, 	PARTDISCHAG,			PRESSSETTL, 			THREEAXIS,		\
-	  TEMPHUM,			WATERDEPTH,CRACKMETER
+	  TEMPHUM,			WATERDEPTH,CRACKMETER,COVER
 }modbNumEnum;
 #endif
 #ifdef  USE_4GAS
@@ -269,7 +293,7 @@ typedef enum{
 typedef enum{
 		CIRCULA_TIME=0,PARTDISCHAG_TIME,PRESSSETTL_TIME,THREEAXIS_TIME,\
 	  CH4_TIME,O2_TIME,H2S_TIME,CO_TIME,\
-	  TEMPHUM_TIME,WATERDEPTH_TIME,CRACKMETER_TIME,\
+	  TEMPHUM_TIME,WATERDEPTH_TIME,CRACKMETER_TIME,COVER_TIME,\
 	  ANA_TEMPHUM_TIME,\
 	HEART_TIME,REG_TIME
 }upDataTimEnum;//需要与modbusName 名称一一对应 来实现代码精简高效
@@ -277,7 +301,7 @@ typedef enum{
 typedef enum{
 		CIRCULA_TIME=0,PARTDISCHAG_TIME,PRESSSETTL_TIME,THREEAXIS_TIME,\
 	  CH4_TIME,O2_TIME,H2S_TIME,CO_TIME,\
-	  TEMPHUM_TIME,WATERDEPTH_TIME,CRACKMETER_TIME,\
+	  TEMPHUM_TIME,WATERDEPTH_TIME,CRACKMETER_TIME,COVER_TIME,\
 	HEART_TIME,REG_TIME
 }upDataTimEnum;//需要与modbusName 名称一一对应 来实现代码精简高效
 #endif
@@ -305,11 +329,11 @@ typedef enum{
 #endif
 
 #ifdef  USE_4GAS
-const static char  modbusName[MODBUS_NUM][NAME_LEN] ={"HuanLiu","JuFang","FangChenJiang","FangWaiPo","JiaWan","YangQi","LiuHuaQing","YiYangHuaTan","WenShiDu","ShuiWei","LieFengYi"};
-const static int   modbusBps[MODBUS_NUM]      ={115200,   115200  ,9600,   9600,   9600,   9600,   9600,   9600,   9600,   9600,9600};
+const static char  modbusName[MODBUS_NUM][NAME_LEN] ={"HuanLiu","JuFang","FangChenJiang","FangWaiPo","JiaWan","YangQi","LiuHuaQing","YiYangHuaTan","WenShiDu","ShuiWei","LieFengYi","JingGai"};
+const static int   modbusBps[MODBUS_NUM]      ={115200,   115200  ,9600,   9600,   9600,   9600,   9600,   9600,   9600,   9600,9600,9600};
 #else
-const static char  modbusName[MODBUS_NUM][NAME_LEN] ={"HuanLiu","JuFang","FangChenJiang","FangWaiPo","WenShiDu","ShuiWei","LieFengYi"};
-const static int   modbusBps[MODBUS_NUM]      ={115200,   115200  ,9600,   9600,     9600,   9600,9600};
+const static char  modbusName[MODBUS_NUM][NAME_LEN] ={"HuanLiu","JuFang","FangChenJiang","FangWaiPo","WenShiDu","ShuiWei","LieFengYi","JingGai"};
+const static int   modbusBps[MODBUS_NUM]      ={115200,   115200  ,9600,   9600,     9600,   9600,9600,9600};
 
 //const static char  modbusName[MODBUS_NUM][NAME_LEN] ={"接地环流","局放","防沉降","防外破","甲烷","氧气","硫化氢","一氧化碳","温湿度","水位","裂缝仪"};
 //const static int   modbusBps[MODBUS_NUM]      ={115200,   115200  ,9600,   9600,   9600,   9600,   9600,   9600,   9600,   9600,9600};
@@ -336,6 +360,7 @@ typedef struct{
 			modbusStru  tempHum[TEMPHUM_485_NUM];
 			modbusStru  waterDepth[WATERDEPTH_485_NUM];
 			modbusStru  crackMeter[CRACKMETER_485_NUM];
+	    modbusStru  cover[COVER_485_NUM];
 ///////////////////////////////////////////////////
 			uint32_t  cirCulaColTime;
 			uint32_t  partDischagColTime;
@@ -351,6 +376,7 @@ typedef struct{
 			uint32_t  tempHumColTime;
 			uint32_t  waterDepthColTime;
 			uint32_t  crackMeterColTime;
+			uint32_t  coverColTime;
 ///////////////////////////////////////////////////
 #ifndef     ANA_MASK
 			analogStru analog[ANALOG_NUM];
@@ -370,12 +396,14 @@ typedef struct{
 			tempHumStru_p	   modbusTempHum[TEMPHUM_485_NUM];
 			depthStru_p			 modbusWaterDepth[WATERDEPTH_485_NUM];
 			crackMeterStru_p modbusCrackMeter[CRACKMETER_485_NUM];
+			coverStru_p      modbusCover[COVER_485_NUM];
 		#ifndef     ANA_MASK
 			tempHumStru_p    analogTempHum;//不支持多路模拟温度传感器
 		#endif
 //放入各种传感器上限下限值 end
-  
+			
 			autoCtrl_stru		 autoctrl[CRTL_TOTAL_NUM];
+			
 			//uint32_t         autoCrtl
 			
 
@@ -405,6 +433,7 @@ typedef struct{
 			tempHumFlagStru	   modbusTempHum[TEMPHUM_485_NUM];
 			depthFlagStru			 modbusWaterDepth[WATERDEPTH_485_NUM];
 	    crackMeterFlagStru modbusCrackMeter[CRACKMETER_485_NUM];
+	    coverFlagStru      modbusCover[COVER_485_NUM];
 			tempHumFlagStru    analogTempHum;//不支持多路模拟温度传感器
 		  digputFlagStru     digInput[DI_NUM];
 	    digputFlagStru     digOutput[DO_NUM];
