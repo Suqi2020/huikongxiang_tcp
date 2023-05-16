@@ -188,11 +188,13 @@
 //         增加LCDWtite 互斥信号量保护
 //         LCDDataSend中发送完毕增加5ms延时 将2个相邻数据包分包 否则lcd屏识别不出
 //V1.07    加入timeQuckIncSet() 给传感器一个初始值，快速测试传感器状态 2分钟内可以监测出故障传感器并显示
-//V1.08    增加井盖LCD显示控制  
-#define APP_VER       ((1<<8)+8)//0x0105 表示1.5版本
+//V1.08    增加井盖LCD显示控制     20230511
+//V1.09    修复485_mutex 互斥量错误放置   20230514
+//V1.10    数字输入输出IO没有配置情况下上电后不上传状态   20230515
+#define APP_VER       ((1<<8)+9)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230512";
+const char date[]="20230515";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -306,9 +308,11 @@ int main(void)
 		stm32_flash_read(FLASH_IP_SAVE_ADDR,    (uint8_t*)&packFlash,sizeof(packFlash));
 		stm32_flash_read(FLASH_MODBUS_SAVE_ADDR,(uint8_t*)&sheet,    sizeof(sheet));
 	  outIOInit();
+	
 		if(packFlash.acuId[0]>=0x7F){
 				rt_strcpy(packFlash.acuId,"000000000000001");//必须加上 执行cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
 		}                                                //会导致内存泄漏	
+	//	rt_strcpy(packFlash.acuId,"01\r\n");
 	//		sheet.testFlag[0]=testNum+0;
 //		sheet.testFlag[1]=&testNum[1];
 //		sheet.testFlag[2]=&testNum[2];
@@ -353,7 +357,7 @@ int main(void)
 		lcdSend_mutex= rt_mutex_create("lcdSend_mutex", RT_IPC_FLAG_FIFO);
 		if (lcdSend_mutex == RT_NULL)
     {
-        rt_kprintf("%screate read485_mutex failed\n",sign);
+        rt_kprintf("%screate lcdSend_mutex failed\n",sign);
     }
 		int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);       
 		if (ret != RT_EOK)
@@ -388,21 +392,21 @@ int main(void)
 		
 
 ////////////////////////////////任务////////////////////////////////////
-//    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,3, 10 );
-//		if(tidW5500!=NULL){
-//				rt_thread_startup(tidW5500);													 
-//				rt_kprintf("%sRTcreat w5500Task task\r\n",sign);
-//		}
-//		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,2, 10 );
-//		if(tidNetRec!=NULL){
-//				rt_thread_startup(tidNetRec);													 
-//				rt_kprintf("%sRTcreat netDataRecTask \r\n",sign);
-//		}
-//		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,2, 10 );
-//		if(tidNetSend!=NULL){
-//				rt_thread_startup(tidNetSend);													 
-//				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
-//		}
+    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,3, 10 );
+		if(tidW5500!=NULL){
+				rt_thread_startup(tidW5500);													 
+				rt_kprintf("%sRTcreat w5500Task task\r\n",sign);
+		}
+		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,2, 10 );
+		if(tidNetRec!=NULL){
+				rt_thread_startup(tidNetRec);													 
+				rt_kprintf("%sRTcreat netDataRecTask \r\n",sign);
+		}
+		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,2, 10 );
+		if(tidNetSend!=NULL){
+				rt_thread_startup(tidNetSend);													 
+				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
+		}
 
 		
 		tidUpkeep 	=  rt_thread_create("upKeep",upKeepStateTask,RT_NULL,512*3,4, 10 );

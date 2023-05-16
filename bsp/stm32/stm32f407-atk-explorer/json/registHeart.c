@@ -1,6 +1,6 @@
 #include  "board.h"
 #include  "cJSON.h"
-const static char sign[]="[dataPack]";
+const static char sign[]="[heart]";
 //heartUpStru  heartUp;
 extern uint16_t RTU_CRC(uint8_t *puchMsg ,uint16_t usDataLen);
 uint8_t   packBuf[TX_RX_MAX_BUF_SIZE];  //与net发送buff大小一致  通过邮箱传递给NetTxBuffer 进行发送出去

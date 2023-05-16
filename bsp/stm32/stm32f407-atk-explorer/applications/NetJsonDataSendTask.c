@@ -20,7 +20,7 @@ uint16_t netDataSendCheck(uint8_t *str)
 				}
 		}
 		else{
-				 rt_kprintf("%shead  err\r\n",task);
+				 rt_kprintf("%ssend head  err\r\n",task);
 		}
 		return lenth;
 }
@@ -30,13 +30,17 @@ uint16_t netDataSendCheck(uint8_t *str)
 void   netDataSendTask(void *para)
 {
 		uint8_t *str=RT_NULL;
-		while(1){//suqi
+		while(0){//suqi
 			//rt_thread_mdelay(1000000);
 			  if (rt_mb_recv(&mbNetSendData, (rt_ubase_t *)&str, 1000) == RT_EOK)
         { 
 						int lenth = strlen((char*)str);
 					//	if((lenth!=0)&&(gbNetState ==RT_TRUE)){
+					rt_kprintf("send: ");
 								netSend(str,lenth);
+					    for(int j=0;j<lenth;j++)
+					      rt_kprintf("%02x ",str[j]);
+					rt_kprintf("\n");
 //						}
 //						else
 //							rt_kprintf("%sERR:net offline drop data\r\n",task);

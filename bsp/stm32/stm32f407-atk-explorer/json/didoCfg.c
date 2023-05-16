@@ -5,13 +5,21 @@ extern bool  diReadFun(char num);
 //数字输入信号上传
 uint16_t digitalInputReport()
 {
-	
 		char* out = NULL;
 		//创建数组
 		cJSON* Array = NULL;
 		// 创建JSON Object  
 		cJSON* root = NULL;
 		cJSON* nodeobj = NULL;
+		for(int j=0;j<DI_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
+			if(packFlash.diginput[j].workFlag==RT_TRUE){//打开
+				goto PACK;
+			}
+		}
+		return 0;
+		
+		PACK:
+
 		//cJSON* nodeobj_p = NULL;
 		root = cJSON_CreateObject();
 		if (root == NULL) return 0;
@@ -217,6 +225,40 @@ uint16_t digitalOutputReport(char *identify)
 		// 创建JSON Object  
 		cJSON* root = NULL;
 		cJSON* nodeobj = NULL;
+	
+				if(rt_strcmp(identify,"3v3_output")==0){
+				for(int j=0;j<V33O_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
+					if(packFlash.v33output[j].workFlag==RT_TRUE){//打开
+											goto PACK;
+					}
+				}
+				return 0;
+			}
+			else if(rt_strcmp(identify,"5v_output")==0){
+				for(int j=0;j<V5O_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
+					if(packFlash.v5output[j].workFlag==RT_TRUE){//打开
+											goto PACK;
+					}
+				}
+				return 0;
+			}
+			else if(rt_strcmp(identify,"12v_output")==0){
+				for(int j=0;j<V12O_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
+					if(packFlash.v12output[j].workFlag==RT_TRUE){//打开
+											goto PACK;
+					}
+				}
+				return 0;
+			}
+			else if(rt_strcmp(identify,"digital_output")==0){
+				for(int j=0;j<DO_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
+					if(packFlash.digoutput[j].workFlag==RT_TRUE){//打开
+						goto PACK;
+					}
+				}
+				return 0;
+			}
+		PACK:
 		//cJSON* nodeobj_p = NULL;
 		root = cJSON_CreateObject();
 		if (root == NULL) return 0;
