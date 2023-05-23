@@ -48,12 +48,12 @@ void  dispLevelState(char level);
 bool levelRead(void);
 void levelSet(char level);
 void  lcdInputConfig(void);
-void	LCDClearSaveOK();
-void	LCDClearRstOK();
+void	LCDClearSaveOK(void);
+void	LCDClearRstOK(void);
 
-void LCDDispSaveOK();
+void LCDDispSaveOK(void);
 
-void LCDDispRstOK();
+void LCDDispRstOK(void);
 void getInputTotalNum(void);
 void 	dispInput(void);
 void 	lastInput(void);

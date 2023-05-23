@@ -226,7 +226,7 @@ uint16_t digitalOutputReport(char *identify)
 		cJSON* root = NULL;
 		cJSON* nodeobj = NULL;
 	
-				if(rt_strcmp(identify,"3v3_output")==0){
+		if(rt_strcmp(identify,"3v3_output")==0){
 				for(int j=0;j<V33O_NUM;j++){//查一遍 找到 GYNJLXSD000000499  如果
 					if(packFlash.v33output[j].workFlag==RT_TRUE){//打开
 											goto PACK;

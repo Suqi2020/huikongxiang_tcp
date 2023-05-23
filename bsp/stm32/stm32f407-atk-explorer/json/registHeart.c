@@ -20,15 +20,15 @@ uint64_t subTimeStamp=0;
 //获取到服务器时间戳差值
 uint64_t subTimeStampGet()
 {
-		return subTimeStamp;
+		return packFlash.utcTime;
 }
 //存储服务器的时间戳差值  
  void  subTimeStampSet(uint64_t time)
 {
 	  if(time>=rt_tick_get())
-				subTimeStamp=time-rt_tick_get();//服务器rtc值-当前tick值
+				packFlash.utcTime=time-rt_tick_get();//服务器rtc值-当前tick值
 		else
-				subTimeStamp = 0;
+				packFlash.utcTime = 0;
 
 }
 //获取当前的utc时间8个字节长度

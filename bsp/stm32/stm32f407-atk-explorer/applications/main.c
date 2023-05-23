@@ -190,11 +190,12 @@
 //V1.07    加入timeQuckIncSet() 给传感器一个初始值，快速测试传感器状态 2分钟内可以监测出故障传感器并显示
 //V1.08    增加井盖LCD显示控制     20230511
 //V1.09    修复485_mutex 互斥量错误放置   20230514
-//V1.10    数字输入输出IO没有配置情况下上电后不上传状态   20230515
-#define APP_VER       ((1<<8)+9)//0x0105 表示1.5版本  20230516
+//V1.10    数字输入输出IO没有配置情况下上电后不上传状态   20230516
+//V1.11    增加时间戳同步后的写入flash中进行存储      20230523
+#define APP_VER       ((1<<8)+11)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230515";
+const char date[]="20230523";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -203,8 +204,8 @@ static    rt_thread_t tidNetSend 	= RT_NULL;
 static    rt_thread_t tidUpkeep 	= RT_NULL;
 static    rt_thread_t tidLCD      = RT_NULL;
 static    rt_thread_t tidAutoCtrl = RT_NULL;
-//信号量的定义
-extern  rt_sem_t  w5500Iqr_semp ;//w5500有数据时候中断来临
+
+
 //互斥信号量定义
 rt_mutex_t   read485_mutex=RT_NULL;//防止多个线程同事读取modbus数据
 rt_mutex_t   lcdSend_mutex=RT_NULL;//防止多个线程同事往lcd发数据
@@ -311,36 +312,11 @@ int main(void)
 	
 		if(packFlash.acuId[0]>=0x7F){
 				rt_strcpy(packFlash.acuId,"000000000000001");//必须加上 执行cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
-		}                                                //会导致内存泄漏	
-	//	rt_strcpy(packFlash.acuId,"01\r\n");
-	//		sheet.testFlag[0]=testNum+0;
-//		sheet.testFlag[1]=&testNum[1];
-//		sheet.testFlag[2]=&testNum[2];
-//		sheet.testFlag[3]=&testNum[3];
-//	  for(int i=0;i<4;i++){
-//				//rt_kprintf("%d ",testNum[i]);
-//			  rt_kprintf("%d ",*sheet.testFlag[i]);
-//		}
-//		rt_kprintf("\n");
-//		for(int i=0;i<4;i++){
-//				testNum[i]=i+10;
-//		}
-//		
-//		for(int i=0;i<4;i++){
-//				rt_kprintf("%d ",*sheet.testFlag[i]);
-//		}
-//		rt_kprintf("\n");
-//		stm32_flash_erase(FLASH_IP_SAVE_ADDR, sizeof(packFlash));//每次擦除128k字节数据 存储时候需要一起存储
-//		stm32_flash_write(FLASH_IP_SAVE_ADDR,(uint8_t*)&packFlash,sizeof(packFlash));
-//		stm32_flash_write(FLASH_MODBUS_SAVE_ADDR,(uint8_t*)&sheet,sizeof(sheet));
-		
-//////////////////////////////////////信号量//////////////////////////////
-	  w5500Iqr_semp = rt_sem_create("w5500Iqr_semp",0, RT_IPC_FLAG_FIFO);
-		if (w5500Iqr_semp == RT_NULL)
-    {
-        rt_kprintf("%screate w5500Iqr_semp failed\n",sign);
-    }
-		
+		}    
+		if(packFlash.utcTime==0xffffffffffffffff){
+				packFlash.utcTime=0;
+		}
+
 		
 		  /* 创建定时器 周期定时器 */
     timer1 = rt_timer_create("timer1", timeout1,

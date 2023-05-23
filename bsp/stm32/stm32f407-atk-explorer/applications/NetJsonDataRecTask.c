@@ -43,7 +43,7 @@ uint16_t netDataCheck(uint8_t *data)
 				}
 		}
 		else{
-				 rt_kprintf("%srec head  err\r\n",task);
+				 rt_kprintf("%shead  err\r\n",task);
 		}	 
 		return lenth;
 }

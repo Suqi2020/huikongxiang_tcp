@@ -106,7 +106,7 @@ void  w5500Task(void *parameter)
 							      packFlash.netIpFlash.remoteIp[1],packFlash.netIpFlash.remoteIp[2],packFlash.netIpFlash.remoteIp[3]);
 								rt_kprintf("%sW5500 ¼àÌý¶Ë¿Ú:%d \r\n",task,packFlash.netIpFlash.remotePort);
 								W5500State=W5500NetOKEnum;
-							  rt_sem_release(w5500Iqr_semp);
+
 								break;
 						}
 						if(dhcpTick++>=5){//1Ãë»ù×¼  200*5
