@@ -55,7 +55,7 @@ void readO2(int num)
 	  uint8_t  *buf = RT_NULL;
 		buf = rt_malloc(LENTH);
 	  uint16_t len = modbusReadReg(sheet.o2[num].slaveAddr,0X0002,READ_03,2,buf);
-//		rt_mutex_take(uartDev[sheet.o2[num].useUartNum].uartMutex,RT_WAITING_FOREVER);
+
 	  //485发送buf  len  等待modbus回应
 		o2UartSend(num,buf,len);
 	  rt_kprintf("%so2 send:",sign);
@@ -77,7 +77,7 @@ void readO2(int num)
 				rt_kprintf("\n");
 		}
 		//提取环流值 第一步判断crc 第二部提取
-//		uartDev[modbusFlash[O2].useUartNum].offline=RT_FALSE;
+
 		int ret2=modbusRespCheck(sheet.o2[num].slaveAddr,buf,len,RT_TRUE);
 		if(0 == ret2){//刷新读取到的值
         int val	=(buf[offset]<<24)+(buf[offset+1]<<16)+(buf[offset+2]<<8)+buf[offset+3];offset+=4;
@@ -89,8 +89,7 @@ void readO2(int num)
 		} 
 		else{//读不到给0
 				if(ret2==2){
-						//rt_kprintf("%sERR:请检查485接线或者供电\r\n",sign);
-//					  uartDev[modbusFlash[O2].useUartNum].offline=RT_TRUE;
+
 				}
 				respStat[num]=0;
 			  o2[num]	=0;
@@ -105,8 +104,13 @@ void readO2(int num)
 
 
 
-/* gasJsonPack中整体打包
-static uint16_t o2JsonPack()
+
+
+//4中气体打包
+//输入 respFlag 为true就是回应
+//              为false就是report数据
+#if 1
+static uint16_t o2Pack(bool respFlag)
 {
 		char* out = NULL;
 		//创建数组
@@ -117,13 +121,23 @@ static uint16_t o2JsonPack()
 		cJSON* nodeobj_p = NULL;
 		root = cJSON_CreateObject();
 		if (root == NULL) return 0;
-		// 加入节点（键值对）
-		cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
-		cJSON_AddStringToObject(root, "packetType","CMD_REPORTDATA");
-		cJSON_AddStringToObject(root, "identifier","environment_monitor");
-		cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
 		char *sprinBuf=RT_NULL;
 		sprinBuf=rt_malloc(20);//20个字符串长度 够用了
+		// 加入节点（键值对）
+		
+	  if(respFlag==true){
+				cJSON_AddNumberToObject(root, "mid",respMid);
+				cJSON_AddStringToObject(root, "packetType","PROPERTIES_485DATA_GET_RESP");
+				cJSON_AddNumberToObject(root, "code",0);
+		}
+		else
+		{
+				cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
+				cJSON_AddStringToObject(root, "packetType","PROPERTIES_485DATA_REP");
+		}	
+		cJSON_AddStringToObject(root, "identifier","o2_monitor");
+		cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
+		
 		
 		{
 		Array = cJSON_CreateArray();
@@ -131,21 +145,25 @@ static uint16_t o2JsonPack()
 		cJSON_AddItemToObject(root, "params", Array);
 		for (int i = 0; i < O2_485_NUM; i++)
 		{		
-			if(sheet.o2[i].workFlag==RT_TRUE){
+
+			if(sheet.co[i].workFlag==RT_TRUE){
 				nodeobj = cJSON_CreateObject();
 				cJSON_AddItemToArray(Array, nodeobj);
-			  cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.o2[i].ID));
-				sprintf(sprinBuf,"%d",respStat[i]);
-				cJSON_AddItemToObject(nodeobj,"responseStatus",cJSON_CreateString(sprinBuf));
+			  cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.co[i].ID));
+				cJSON_AddNumberToObject(nodeobj,"responseStatus",respStat[i]);
 				
 				nodeobj_p= cJSON_CreateObject();
 				cJSON_AddItemToObject(nodeobj, "data", nodeobj_p);
-				sprintf(sprinBuf,"%02f",o2[i]);
-				cJSON_AddItemToObject(nodeobj_p,"deepness",cJSON_CreateString(sprinBuf));
+
+					sprintf(sprinBuf,"%02f",o2[i]);
+					cJSON_AddItemToObject(nodeobj_p,"oxy",cJSON_CreateString(sprinBuf));
+
+			
 				sprintf(sprinBuf,"%llu",utcTime());
 				cJSON_AddItemToObject(nodeobj_p,"monitoringTime",cJSON_CreateString(sprinBuf));
 			}
-		}
+			}
+		
 		}
 	
 		sprintf(sprinBuf,"%llu",utcTime());
@@ -158,8 +176,6 @@ static uint16_t o2JsonPack()
 		len+=LENTH_LEN;//json长度最后再填写
 		
 		// 释放内存  
-		
-		
 		out = cJSON_Print(root);
 		rt_strcpy((char *)packBuf+len,out);
 		len+=rt_strlen(out);
@@ -174,7 +190,6 @@ static uint16_t o2JsonPack()
 			cJSON_Delete(root);
 			out=NULL;
 		}
-	
 
 		//lenth
 	  packBuf[2]=(uint8_t)((len-LENTH_LEN-HEAD_LEN)>>8);//更新json长度
@@ -188,35 +203,157 @@ static uint16_t o2JsonPack()
 		packBuf[len]=(uint8_t)(TAIL>>8); len++;
 		packBuf[len]=(uint8_t)(TAIL);    len++;
 		packBuf[len]=0;//len++;//结尾 补0
-		mcu.repDataMessID =mcu.upMessID;
-		//mcu.devRegMessID =mcu.upMessID;
-		upMessIdAdd();
+		if(respFlag==false){
+				mcu.repDataMessID =mcu.upMessID;
+				//mcu.devRegMessID =mcu.upMessID;
+				upMessIdAdd();
+		}
 		rt_kprintf("%s len:%d\r\n",sign,len);
 		rt_kprintf("\r\n%slen：%d str0:%x str1:%x str[2]:%d  str[3]:%d\r\n",sign,len,packBuf[0],packBuf[1],packBuf[2],packBuf[3]);
 
 		rt_free(sprinBuf);
 		sprinBuf=RT_NULL;
-
 		return len;
 }
 
-*/
-//氧气读取  供上层函数调用
-void o2Read2Send()
+#endif
+
+//复位温湿度的warn状态值
+void resetO2WarnFlag()
 {
-	 //int workFlag=RT_FALSE;
-	 for(int i=0;i<O2_485_NUM;i++){
-			if(sheet.o2[i].workFlag==RT_TRUE){
-						readO2(i);
-						//workFlag=RT_TRUE;
+		for (int i = 0; i < O2_485_NUM; i++)
+		{		
+//				inpoutpFlag.modbusCo[i].coLowFlag =false;
+//			  inpoutpFlag.modbusCo[i].coUpFlag  =false;
+				inpoutpFlag.modbusO2[i].o2LowFlag =false;
+			  inpoutpFlag.modbusO2[i].o2UpFlag  =false;
+//				inpoutpFlag.modbusH2s[i].h2sLowFlag =false;
+//			  inpoutpFlag.modbusH2s[i].h2sUpFlag  =false;
+//				inpoutpFlag.modbusCh4[i].ch4LowFlag =false;
+//			  inpoutpFlag.modbusCh4[i].ch4UpFlag  =false;
+		}
+}
+
+
+
+
+
+//模拟温度和湿度值读取以及打包成json格式  返回true 有告警 false 无告警
+bool modO2Warn2Send()
+{
+		if(gasAlarmFlag==false)//TEST
+			return false;
+		char* out = NULL;
+		//创建数组
+		cJSON* Array = NULL;
+		// 创建JSON Object  
+		cJSON* root = NULL;
+		cJSON* nodeobj = NULL;
+		cJSON* nodeobj_p = NULL;
+		root = cJSON_CreateObject();
+		if (root == NULL) return false;
+		// 加入节点（键值对）
+		cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
+		cJSON_AddStringToObject(root, "packetType","EVENTS_485_ALARM");
+		cJSON_AddStringToObject(root, "identifier","o2_monitor");
+		cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
+		char *sprinBuf=RT_NULL;
+		sprinBuf=rt_malloc(20);//20个字符串长度 够用了
+		{
+				Array = cJSON_CreateArray();
+				if (Array == NULL) return false;
+				cJSON_AddItemToObject(root, "params", Array);
+				for (int i = 0; i < O2_485_NUM; i++)
+				{		
+						if(sheet.o2[i].workFlag==RT_TRUE){
+							nodeobj = cJSON_CreateObject();
+							cJSON_AddItemToArray(Array, nodeobj);
+							cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.co[i].ID));
+							cJSON_AddNumberToObject(nodeobj,"alarmStatus",1);
+							nodeobj_p= cJSON_CreateObject();
+							cJSON_AddItemToObject(nodeobj, "data", nodeobj_p);
+		
+							cJSON_AddNumberToObject(nodeobj_p,"oxy_low_alarm",inpoutpFlag.modbusO2[i].o2LowFlag );//cJSON_CreateNumber("10"));
+							cJSON_AddNumberToObject(nodeobj_p,"oxy_high_alarm",inpoutpFlag.modbusO2[i].o2UpFlag);
+//							cJSON_AddNumberToObject(nodeobj_p,"monoxide_low_alarm",inpoutpFlag.modbusCo[i].coLowFlag);
+//							cJSON_AddNumberToObject(nodeobj_p,"monoxide_high_alarm",inpoutpFlag.modbusCo[i].coUpFlag );		
+//							cJSON_AddNumberToObject(nodeobj_p,"hydrogenSulfide_low_alarm",inpoutpFlag.modbusH2s[i].h2sLowFlag);
+//							cJSON_AddNumberToObject(nodeobj_p,"hydrogenSulfide_high_alarm",inpoutpFlag.modbusH2s[i].h2sUpFlag);		
+//							cJSON_AddNumberToObject(nodeobj_p,"methane_low_alarm",inpoutpFlag.modbusCh4[i].ch4LowFlag );//cJSON_CreateNumber("10"));
+//							cJSON_AddNumberToObject(nodeobj_p,"methane_high_alar",inpoutpFlag.modbusCh4[i].ch4UpFlag);
+														
+							sprintf(sprinBuf,"%llu",utcTime());
+							cJSON_AddItemToObject(nodeobj_p,"monitoringTime",cJSON_CreateString(sprinBuf));
+						}
 				}
 		}
-//		if(workFlag==RT_TRUE){
-//				rt_kprintf("%s打包采集的O2数据\r\n",sign);
-//				o2JsonPack();
-//				if(netStat==RT_TRUE)
-//						rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER);
-//		}
+		sprintf(sprinBuf,"%llu",utcTime());
+		cJSON_AddStringToObject(root,"timestamp",sprinBuf);
+		//打包
+		int len=0;
+		packBuf[len]= (uint8_t)(HEAD>>8); len++;
+		packBuf[len]= (uint8_t)(HEAD);    len++;
+		len+=LENTH_LEN;//json长度最后再填写
+		// 释放内存  
+		out = cJSON_Print(root);
+		rt_strcpy((char *)packBuf+len,out);
+		len+=rt_strlen(out);
+		if(out!=NULL){
+				for(int i=0;i<rt_strlen(out);i++)
+						rt_kprintf("%c",out[i]);
+				rt_kprintf("\n");
+				rt_free(out);
+				out=NULL;
+		}
+		if(root!=NULL){
+			cJSON_Delete(root);
+			out=NULL;
+		}
+		//lenth
+	  packBuf[2]=(uint8_t)((len-LENTH_LEN-HEAD_LEN)>>8);//更新json长度
+	  packBuf[3]=(uint8_t)(len-LENTH_LEN-HEAD_LEN);
+	  uint16_t jsonBodyCrc=RTU_CRC(packBuf+HEAD_LEN+LENTH_LEN,len-HEAD_LEN-LENTH_LEN);
+	  //crc
+	  packBuf[len]=(uint8_t)(jsonBodyCrc>>8); len++;//更新crc
+	  packBuf[len]=(uint8_t)(jsonBodyCrc);    len++;
+		//tail
+		packBuf[len]=(uint8_t)(TAIL>>8); len++;
+		packBuf[len]=(uint8_t)(TAIL);    len++;
+		packBuf[len]=0;//len++;//结尾 补0
+		mcu.repDataMessID =mcu.upMessID;
+		//mcu.devRegMessID =mcu.upMessID;
+		upMessIdAdd();
+		rt_free(sprinBuf);
+		sprinBuf=RT_NULL;
+		return true;
 }
+//4种气体json打包的二次封装
+
+//co气体json打包的二次封装
+void  o2Read2Send(rt_bool_t netStat,bool respFlag)
+{
+		rt_kprintf("%s打包采集的o2数据\r\n",sign);
+		 int workFlag=RT_FALSE;
+	 for(int i=0;i<O2_485_NUM;i++){
+		if(sheet.o2[i].workFlag==RT_TRUE){
+					readO2(i);
+					workFlag=RT_TRUE;
+			}
+	}
+	if(workFlag==RT_TRUE){
+				o2Pack(respFlag);
+			if(netStat==RT_TRUE)
+				rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER);
+				rt_thread_mdelay(500);
+				if(modO2Warn2Send()==true){
+						resetO2WarnFlag();//每次判断后复位warnflag状态值
+						if(netStat==RT_TRUE)
+								rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER);
+				}
+			}
+
+}
+
+
 #endif
 

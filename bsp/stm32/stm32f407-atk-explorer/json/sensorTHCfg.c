@@ -235,7 +235,7 @@ void senseTHGetJsonResp(cJSON   *Json,bool modbusFlag)
 								}
 						}
 				}
-				else if(rt_strcmp(string,"environment_mointor")==0){
+				else if(rt_strcmp(string,"environment_monitor")==0){
 			
 						arrayNew = cJSON_CreateArray();
 						if(arrayNew==NULL) return;
@@ -603,7 +603,7 @@ void senseTHSetJsonResp(cJSON   *Json,bool  modbusFlag)
 								}
 						}
 				}
-				else if(rt_strcmp(string,"environment_mointor")==0){
+				else if(rt_strcmp(string,"environment_monitor")==0){
 						for(int i=0;i<arrayGet_size;i++)
 						{
 								cJSON *item=cJSON_GetArrayItem(arrayGet,i);

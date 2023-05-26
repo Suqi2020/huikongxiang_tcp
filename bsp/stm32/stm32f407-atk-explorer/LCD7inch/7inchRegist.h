@@ -59,6 +59,9 @@
 #define		KEY_MODBUS_CFG_NAME_ADDR  0x130E
 #define		MODBUS_CFG_NAME2_ADDR  		0x1380
 
+#define   DISP_MODBUS_SAME_ID_MSG_ADDR          0X13A0
+
+
 #define		KEY_MODBUS_LASTNAME_ADDR  0x1310
 #define		KEY_MODBUS_NEXTNAME_ADDR  0x1312
 #define		KEY_MODBUS_SURENAME_ADDR  0x1314
@@ -157,6 +160,9 @@
 #define   KEY_INPUT_NEXT_ADDR              0x5078
 #define   KEY_INPUT_DEL_ADDR               0x507A
 #define   KEY_INPUT_RETURN_ADDR            0x507C
+
+
+#define   DISP_INPUT_SAME_ID_MSG_ADDR          0X5080
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //输出设置
@@ -193,7 +199,7 @@
 #define        KEY_OUTPUT_READ_LAST_P_ADDR     			 0x5198
 #define        KEY_OUTPUT_READ_NEXT_P_ADDR     			 0x519A
 #define        KEY_OUTPUT_READ_RETURN_P_ADDR     		 0x519C
-
+#define        DISP_OUTPUT_SAME_ID_MSG_ADDR          0X51A0
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //模拟传感器配置显示
@@ -310,11 +316,18 @@
 //主界面
 #define   KEY_NETERROR_ADDR         0X1A00
 #define   KEY_MODBUSERR_ADDR        0X1A02
-//#define   NET_ERR_DISPLAY_ADDR      0X1A0C
-//#define   MODBUS_ERR_DISPLAY_ADDR   0X1A0E
-#define   KEY_COVER_DISPLAY_ADDR   0x1A16
+#define   KEY_INPUT_ADDR     			  0X1A0C
+#define   KEY_OUTPUT_ADDR   				0X1A0E
+#define   KEY_MODUBS_ADDR  					0X1A0A
+#define   KEY_COVER_DISPLAY_ADDR    0x1A16
 #define   NET_ERR_DISPLAY_ADDR      0X1A20
 #define   MODBUS_ERR_DISPLAY_ADDR   0X1A22
+//密码输入界面
+#define   KEY_PASSWD_ENTER_ADDR     0X1A1A
+#define   TEXT_PASSWD_ADDR          0X1A24
+#define   KEY_PASSWD_SURE_ADDR      0X1A2E
+#define   TEXT_ERR_PASSWD_DISP_ADDR  0X1A30
+
 //////////////////////////////////////////////////////////////
 //kenal lcd command
 ///#define   LCD_HEAD       0XAEA5
@@ -331,7 +344,7 @@
 
 
 
-
+extern bool pwssWdRet;
 
 extern int LCDWtite(uint16_t addr,uint8_t *data,uint8_t dataLen);
 
@@ -359,7 +372,8 @@ extern int LCDWtite(uint16_t addr,uint8_t *data,uint8_t dataLen);
 
 
 
-
+void LCDDispSameID(uint16_t addr);
+void LCDRstDispSameID(uint16_t addr);
 
 #endif
 

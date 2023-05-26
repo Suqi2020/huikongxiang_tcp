@@ -9,7 +9,7 @@
 //								 3/数字,模拟传感器阈值存储
 
 
-#define  LENTH   500
+#define  LENTH   300
 #define  MSGPOOL_LEN   LENTH //485数据最大量  大于1k需要修改此处
 
 //typedef struct{

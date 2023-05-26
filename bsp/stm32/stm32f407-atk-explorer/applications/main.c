@@ -192,10 +192,12 @@
 //V1.09    修复485_mutex 互斥量错误放置   20230514
 //V1.10    数字输入输出IO没有配置情况下上电后不上传状态   20230516
 //V1.11    增加时间戳同步后的写入flash中进行存储      20230523
-#define APP_VER       ((1<<8)+11)//0x0105 表示1.5版本  20230516
+//V1.12    增加ID的重复性排查 保证ID的唯一性  4种气体分开上传 
+//V1.13    屏幕配置增加ID的重复提示 增加LCD显示密码登录 改动json注册打包格式
+#define APP_VER       ((1<<8)+13)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230523";
+const char date[]="20230526";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;

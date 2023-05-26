@@ -1113,6 +1113,11 @@
               <FileType>1</FileType>
               <FilePath>.\modbus\rs485Cover.c</FilePath>
             </File>
+            <File>
+              <FileName>rs485PartDischag_backup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus\rs485PartDischag_backup.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

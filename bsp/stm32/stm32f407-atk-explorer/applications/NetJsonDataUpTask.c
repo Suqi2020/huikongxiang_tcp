@@ -100,10 +100,10 @@ extern void partDischagRead2Send(rt_bool_t netStat,bool respFlag);
 extern void circulaRead2Send(rt_bool_t netStat,bool respFlag);
 extern void waterDepthRead2Send(rt_bool_t netStat,bool respFlag);
 extern void tempHumRead2Send(rt_bool_t netStat,bool respFlag);
-extern void o2Read2Send(rt_bool_t netStat);
-extern void h2sRead2Send(rt_bool_t netStat);	
-extern void ch4Read2Send(rt_bool_t netStat);	
-extern void coRead2Send(rt_bool_t netStat);	
+extern void o2Read2Send(rt_bool_t netStat,bool respFlag);
+extern void h2sRead2Send(rt_bool_t netStat,bool respFlag);
+extern void ch4Read2Send(rt_bool_t netStat,bool respFlag);
+extern void coRead2Send(rt_bool_t netStat,bool respFlag);
 //void analogTempHumJsonPack(uint8_t chanl);
 #ifndef     ANA_MASK
 extern void anaTempHumReadPack2Send(bool gbNetState,bool respFlag);
@@ -180,23 +180,18 @@ static void  timeOutRunFun()
 				rt_kprintf("%sTHREEAXIS_TIMEout\r\n",task);
 				break;
 
-//			case  CH4_TIME:
-//				ch4Read2Send(gbNetState);
-//				break;
-//			case  O2_TIME:
-//				o2Read2Send(gbNetState);
-//				break;
-//			case  H2S_TIME:
-//				h2sRead2Send(gbNetState);
-//				break;
-			case  GAS_TIME://4种气体在一起读取 所以前三个不使用 只在此处读取并打包发送  关闭时候只需要关闭CO就可以把所有气体全部关闭
-		#ifdef USE_4GAS 	
-   			ch4Read2Send(gbNetState);
-				o2Read2Send(gbNetState);
-				h2sRead2Send(gbNetState);
-			  coRead2Send(gbNetState);
-			  gasJsonPack(gbNetState,false);
-		#endif
+			case  CH4_TIME:
+				ch4Read2Send(gbNetState,false);
+				break;
+			case  O2_TIME:
+				o2Read2Send(gbNetState,false);
+				break;
+			case  H2S_TIME:
+				h2sRead2Send(gbNetState,false);
+				break;
+			case  CO_TIME://4种气体在一起读取 所以前三个不使用 只在此处读取并打包发送  关闭时候只需要关闭CO就可以把所有气体全部关闭
+
+			  coRead2Send(gbNetState,false);
 				break;
 			case  TEMPHUM_TIME:
 				tempHumRead2Send(gbNetState,false);
@@ -241,9 +236,9 @@ void startTimeList()
 		timeInit(PARTDISCHAG_TIME,5,10);
 		timeInit(PRESSSETTL_TIME, 8,15);
 		timeInit(THREEAXIS_TIME,  8,20);
-//	  timeInit(H2S_TIME, 				sheet.h2sColTime,24);
-//		timeInit(CH4_TIME, 				sheet.ch4ColTime,28);
-//		timeInit(O2_TIME, 				sheet.o2ColTime,30);
+	  timeInit(H2S_TIME, 				sheet.h2sColTime,24);
+		timeInit(CH4_TIME, 				sheet.ch4ColTime,28);
+		timeInit(O2_TIME, 				sheet.o2ColTime,30);
 
 		timeInit(GAS_TIME, 				10,35);
 
@@ -258,11 +253,11 @@ void startTimeList()
 		timeInit(PARTDISCHAG_TIME,sheet.partDischagColTime,10);
 		timeInit(PRESSSETTL_TIME, sheet.pressSetlColTime,15);
 		timeInit(THREEAXIS_TIME,  sheet.threeAxissColTime,20);
-//	  timeInit(H2S_TIME, 				sheet.h2sColTime,24);
-//		timeInit(CH4_TIME, 				sheet.ch4ColTime,28);
-//		timeInit(O2_TIME, 				sheet.o2ColTime,30);
+	  timeInit(H2S_TIME, 				sheet.h2sColTime,24);
+		timeInit(CH4_TIME, 				sheet.ch4ColTime,28);
+		timeInit(O2_TIME, 				sheet.o2ColTime,30);
 
-		timeInit(GAS_TIME, 				sheet.gasColTime,35);
+		timeInit(CO_TIME, 				sheet.coColTime,35);
 
 		timeInit(TEMPHUM_TIME, 		sheet.tempHumColTime,40);
 		timeInit(WATERDEPTH_TIME, sheet.waterDepthColTime,45);

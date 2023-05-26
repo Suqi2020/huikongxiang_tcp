@@ -42,7 +42,7 @@ void senseTimeReadJsonResp(char *string,bool  modbusFlag)
 						result=true;
 						caltime=sheet.tempHumColTime;
 					}
-					else if(rt_strcmp(string,"environment_mointor")==0){
+					else if(rt_strcmp(string,"environment_monitor")==0){
 						result=true;
 						caltime=sheet.tempHumColTime;
 					}
@@ -173,7 +173,7 @@ void senseTimeJsonSet(cJSON   *Json,bool  modbusFlag)
 						result=true;
 						sheet.tempHumColTime = calTime;
 					}
-					else if(rt_strcmp(string,"environment_mointor")==0){
+					else if(rt_strcmp(string,"environment_monitor")==0){
 						result=true;
 						sheet.tempHumColTime = calTime;
 					}

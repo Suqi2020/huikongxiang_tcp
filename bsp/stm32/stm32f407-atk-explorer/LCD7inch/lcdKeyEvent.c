@@ -91,6 +91,8 @@ void coverLastDisp(void);
 void coverNextDisp(void);
 void coverNowDisp(void);
 void LCDDispNetErrState(void);
+bool surePassWord(void);
+void LCDRstErrPw(void);
 #ifndef     ANA_MASK
 void lcdAnaConfig(void);
 void  delOneAna(void);
@@ -146,6 +148,8 @@ void  keyReturn(uint16_t keyAddr)
 				LDCDispMosbusInfo();
 				break;
 			case KEY_MODBUS_CFG_SURE_ADDR:
+
+						
 				keyModbusCfgSure();
 				break;
 			case KEY_MODBUSDISP_LAST_ADDR:
@@ -210,7 +214,15 @@ void  keyReturn(uint16_t keyAddr)
 			
 			case KEY_SWITCH_RETURN_ADDR:
 				break;
-			
+			case  KEY_INPUT_ADDR:
+				LCDRstDispSameID(DISP_INPUT_SAME_ID_MSG_ADDR);
+			  break;
+			case  KEY_OUTPUT_ADDR:
+				LCDRstDispSameID(DISP_OUTPUT_SAME_ID_MSG_ADDR);
+			  break;
+			case  KEY_MODUBS_ADDR:
+				LCDRstDispSameID(DISP_MODBUS_SAME_ID_MSG_ADDR);
+			  break;
 
 			case KEY_SWITCHINTERF_SURE_ADDR://do nothing
 				break;
@@ -296,6 +308,7 @@ void  keyReturn(uint16_t keyAddr)
 				dispInput();
 				break;
 			case  KEY_INPUT_RETURN_ADDR:
+				LCDRstDispSameID(DISP_INPUT_SAME_ID_MSG_ADDR);
 				break;
 
 			case KEY_OUTPUT_SURE_ADDR://
@@ -348,8 +361,13 @@ void  keyReturn(uint16_t keyAddr)
 			case KEY_COVER_DISPLAY_ADDR:
 				coverNowDisp();
 				break;
+			case KEY_PASSWD_ENTER_ADDR:
+				LCDRstErrPw();
+				break;
+			case KEY_PASSWD_SURE_ADDR:
+				surePassWord();
+				break;
 
-			
 			case  KEY_OUTPUT_READ_INTERFACE_ADDR://进去接口
 				dispoutputReadInterf();
 				dispOutputRead();
@@ -447,8 +465,7 @@ void lcdCopyAnaModel(uint8_t *rec);
 void lcdCopyAnaPort(uint8_t *rec);
 //拷贝输入的time到AnaInput中
 void lcdCopyAnaTime(uint8_t *rec);
-
-
+bool checkPassWord(char *rec);
 //lcd 发来的配置解析
 void LCDDispConfig(uint8_t *recBuf,int len)
 {
@@ -554,6 +571,14 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 							break;
 					}
 				}
+				if(devIDOKCheck(LCDInput.ID)!=true){//核对ID
+						LCDDispSameID(DISP_MODBUS_SAME_ID_MSG_ADDR);
+						rt_kprintf("%sERR:same ID\n",sign);
+				}
+				else{
+							LCDRstDispSameID(DISP_MODBUS_SAME_ID_MSG_ADDR);
+				}
+				//lcdCopyInputID(recBuf);
 				break;    		
 //
 			case MODBUS_CFG_TYPE_ADDR:
@@ -583,7 +608,9 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 				lcdCopyInputName(recBuf);
 				break;
 			case DISP_INPUTCFG_ID_ADDR:
+				
 				lcdCopyInputID(recBuf);
+
 				break;
 			case DISP_INPUTCFG_TYPE_ADDR:
 				lcdCopyInputModel(recBuf);
@@ -597,8 +624,11 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 			case DISP_OUTPUT_ID_ADDR:
 				lcdCopyOutputID(recBuf);
 				break;
+      case TEXT_PASSWD_ADDR://密码长度最大8位
+				pwssWdRet=checkPassWord((char *)recBuf);
 
-			case DISP_OUTPUT_TYPE_ADDR:
+				break;
+ 			case DISP_OUTPUT_TYPE_ADDR:
 				lcdCopyOutputModel(recBuf);
 				break;
 			case DISP_OUTPUT_PORT_ADDR:
@@ -646,7 +676,7 @@ void LCDClearRstOK()
 	 buf[0]=0xff;
 	 buf[1]=0xff;
 	
-	 LCDWtite(KEY_RESETOK_ADDR,buf,10);
+	 LCDWtite(KEY_RESETOK_ADDR,buf,4);
 }
 
 void LCDDispRstOK()
@@ -658,3 +688,87 @@ void LCDDispRstOK()
 	 LCDWtite(KEY_RESETOK_ADDR,buf,10);
 }
 
+
+
+
+void LCDDispSameID(uint16_t addr)
+{
+		uint8_t buf[14]="ERR:SAME ID";
+		buf[12]=0xff;
+		buf[13]=0xff;
+	
+	 LCDWtite(addr,buf,14);
+}
+void LCDRstDispSameID(uint16_t addr)
+{
+		uint8_t buf[4]="";
+		buf[0]=0xff;
+		buf[1]=0xff;
+	
+	 LCDWtite(addr,buf,4);
+}
+
+
+#define PASSWORD_LEN   8
+char passWord[PASSWORD_LEN]="gy2023";
+bool pwssWdRet=false;
+bool checkPassWord(char *rec)
+{
+	  char passWord_p[PASSWORD_LEN]={0};
+		for(int i=0;i<PASSWORD_LEN;i++){
+				passWord_p[i]=rec[7+i];
+				if(((uint8_t )rec[7+i]==0xff)||(rec[7+i]==0)){
+						passWord_p[i]=0;
+						break;
+				}
+		}
+		if(strcmp(passWord,passWord_p)==0){
+				return true;
+		}
+		return false;
+}
+
+
+
+
+
+void LCDDispErrPasswd()
+{
+		uint8_t buf[14]="ERROR!";
+		buf[7]=0xff;
+		buf[8]=0xff;
+	
+	  LCDWtite(TEXT_ERR_PASSWD_DISP_ADDR,buf,9);
+}
+//LCD复位错误的pwd信息提示
+void LCDRstErrPw()
+{
+		uint8_t buf[4]="";
+		buf[0]=0xff;
+		buf[1]=0xff;
+	
+	  LCDWtite(TEXT_ERR_PASSWD_DISP_ADDR,buf,2);
+	  LCDWtite(TEXT_PASSWD_ADDR,buf,2);
+	
+}
+
+
+
+//password 确认按键
+bool  surePassWord()
+{
+	  uint8_t buf[10]={0X5A,0XA5,0X07,0X82,0,0X84,0X5A,0X01,0,2};//最后一个0002 表示切换到02图
+		if(pwssWdRet==true){	
+				rt_kprintf("%sPassword ok\n",sign);
+			  LCDRstErrPw();
+				extern rt_mutex_t   lcdSend_mutex;
+				rt_mutex_take(lcdSend_mutex,RT_WAITING_FOREVER);
+				extern  void LCDDataSend(uint8_t *buf,int lenth);
+				LCDDataSend(buf,sizeof(buf));
+				rt_mutex_release(lcdSend_mutex);
+		}
+		else{
+				rt_kprintf("%sPassword err\n",sign);
+			  LCDDispErrPasswd();
+		}
+}

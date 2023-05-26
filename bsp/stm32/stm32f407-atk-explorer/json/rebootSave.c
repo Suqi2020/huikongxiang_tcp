@@ -176,7 +176,7 @@ uint16_t resetDeviceResp(cJSON *Json,char *identify)
 									}
 							}
 					}
-					else if(rt_strcmp(identify,"environment_mointor")==0){
+					else if(rt_strcmp(identify,"environment_monitor")==0){
 								for(int j=0;j<CO_485_NUM;j++){//核对有没有配置过
 										if(0==rt_strcmp(sheet.co[j].ID,devID->valuestring)){
 												rt_kprintf("%sgas rst ok id[%s],port[%d]\n",sign,sheet.co[j].ID,sheet.co[j].useUartNum);

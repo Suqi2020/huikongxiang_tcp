@@ -114,16 +114,24 @@ rt_bool_t heartRespFun(cJSON  *Json)
 //需要判断devid 和消息ID一致才认为注册成功
 rt_bool_t comRespFun(cJSON  *Json,uint32_t mesgID)
 {
+		cJSON  *time =cJSON_GetObjectItem(Json,"timestamp");
+	  rt_kprintf("%stime:%s\n\r",sign,time->valuestring);
+		static uint64_t u64getTick_p;
+		u64getTick_p =atoll(time->valuestring);
 
+	  extern void  subTimeStampSet(uint64_t time);
+	  if(utcTime()-u64getTick_p>=3000){
+        subTimeStampSet(u64getTick_p);
+			  rt_kprintf("%stime:RTC 误差大于3秒 校时\r\n",sign);
+		}
+		
 		cJSON  *msg =cJSON_GetObjectItem(Json,"msg");
-		rt_kprintf("%sheart msg %s\r\n",sign,msg->valuestring);
+		rt_kprintf("%sreg msg %s\r\n",sign,msg->valuestring);
 	
-
 		cJSON  *mid =cJSON_GetObjectItem(Json,"mid");
     if(mesgID!= mid->valueint){
 				rt_kprintf("%sreg resp messID err %d %d\r\n",sign,mid->valueint,mesgID);
 			  return RT_FALSE;
-			
 		}
 		cJSON  *code =cJSON_GetObjectItem(Json,"code");
 		rt_kprintf("%sreg code  %d\r\n",sign,code->valueint);
@@ -131,7 +139,6 @@ rt_bool_t comRespFun(cJSON  *Json,uint32_t mesgID)
 			  rt_kprintf("%sreg code err\r\n",sign);
 				return RT_FALSE;
 		}
-
 		return RT_TRUE;
 }
 //下行数据解析

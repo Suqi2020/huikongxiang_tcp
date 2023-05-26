@@ -55,7 +55,7 @@ uint16_t heartUpJsonPack()
 		if (root == NULL) return 0;
 		// 加入节点（键值对）
 		cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
-		cJSON_AddStringToObject(root, "packetType","CMD_HEARTBEAT");
+		cJSON_AddStringToObject(root, "packetType","PROPERTIES_HEART");
 	  cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
 		char *sprinBuf=RT_NULL;
 		sprinBuf=rt_malloc(20);//20个字符串长度 够用了
@@ -406,12 +406,13 @@ uint16_t devRegJsonPack()
 	// 创建JSON Object  
 	cJSON* root = NULL;
 	cJSON* nodeobj = NULL;
+	cJSON* nodeobj_p = NULL;
 //	cJSON* nodeobj_p = NULL;
 	root = cJSON_CreateObject();
 	if (root == NULL) return 0;
 	// 加入节点（键值对）
 	cJSON_AddNumberToObject(root, "mid",mcu.upMessID);
-	cJSON_AddStringToObject(root, "packetType","CMD_DEVICE_REGISTER");
+	cJSON_AddStringToObject(root, "packetType","PROPERTIES_REG");
 	cJSON_AddStringToObject(root, "acuId",(char *)packFlash.acuId);
 	char *sprinBuf=RT_NULL;
 	sprinBuf=rt_malloc(20);//20个字符串长度 够用了
@@ -420,6 +421,9 @@ uint16_t devRegJsonPack()
 			if (Array == NULL) return 0;
 			cJSON_AddItemToObject(root, "params", Array);
 ////////////////////////modbus格式设备注册打包////////////////////////		
+		
+		
+
 			for(int i=0;i<MODBUS_NUM;i++){
 			switch(i)
 			{
@@ -428,9 +432,13 @@ uint16_t devRegJsonPack()
 							if(sheet.cirCula[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.cirCula[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.cirCula[j].ID));
+                  nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.cirCula[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.cirCula[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",GROUNDING_CURRENT);
 							}
 					}
 				break;
@@ -439,9 +447,12 @@ uint16_t devRegJsonPack()
 							if(sheet.partDischag[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.partDischag[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.partDischag[j].ID));
+								  nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.partDischag[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.partDischag[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",DISCHARGE);
 							}
 					}
 				break;
@@ -450,9 +461,12 @@ uint16_t devRegJsonPack()
 							if(sheet.pressSetl[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.pressSetl[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.pressSetl[j].ID));
+								  nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.pressSetl[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.pressSetl[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type", SETTLEMENT);
 							}
 					}
 				break;
@@ -461,9 +475,12 @@ uint16_t devRegJsonPack()
 							if(sheet.threeAxiss[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.threeAxiss[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.threeAxiss[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.threeAxiss[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.threeAxiss[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",VIBRATION);
 							}
 					}
 				break;
@@ -473,9 +490,12 @@ uint16_t devRegJsonPack()
 							if(sheet.ch4[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.ch4[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.ch4[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.ch4[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.ch4[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}
 					}
 				break;
@@ -484,9 +504,12 @@ uint16_t devRegJsonPack()
 							if(sheet.o2[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.o2[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.o2[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.o2[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.o2[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}
 					}
 				break;
@@ -495,9 +518,12 @@ uint16_t devRegJsonPack()
 							if(sheet.h2s[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.h2s[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.h2s[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.h2s[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.h2s[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}
 					}
 				break;
@@ -506,9 +532,12 @@ uint16_t devRegJsonPack()
 							if(sheet.co[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.co[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.co[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.co[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString("QiTi"));//modbusName[i]
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.co[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}
 					}
 				break;
@@ -518,9 +547,12 @@ uint16_t devRegJsonPack()
 							if(sheet.tempHum[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.tempHum[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.tempHum[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.tempHum[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.tempHum[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}
 					}
 				break;
@@ -529,9 +561,12 @@ uint16_t devRegJsonPack()
 							if(sheet.waterDepth[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.waterDepth[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.waterDepth[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.waterDepth[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.waterDepth[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",WATER_LEVEL);
 							}
 					}
 				break;
@@ -540,9 +575,12 @@ uint16_t devRegJsonPack()
 							if(sheet.crackMeter[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.crackMeter[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.crackMeter[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.crackMeter[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.crackMeter[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",CRACK_TESTER);
 							}
 					}
 				break;
@@ -551,9 +589,12 @@ uint16_t devRegJsonPack()
 							if(sheet.cover[j].workFlag==RT_TRUE){
 									nodeobj = cJSON_CreateObject();
 									cJSON_AddItemToArray(Array, nodeobj);
-									cJSON_AddItemToObject(nodeobj,"model",cJSON_CreateString(sheet.cover[j].model));
-									cJSON_AddItemToObject(nodeobj,"name",cJSON_CreateString(modbusName[i]));
-									cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(sheet.cover[j].ID));
+								nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.cover[j].model));
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
+									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.cover[j].ID));
+								  cJSON_AddNumberToObject(nodeobj_p,"type",MANHOLE_COVER);
 							}
 					}
 				break;
@@ -598,112 +639,127 @@ uint16_t devRegJsonPack()
 #endif
 ////////////////////////////////////////////////数字输入打包////////////////////////////////////////////////////
 		 for(i=0;i<DI_NUM;i++){
-			  add=true;
-				if(i>=1){
-						for(j=0;j<i;j++){
-								if(rt_strcmp(packFlash.diginput[i].devID,packFlash.diginput[j].devID)==0){
-										add=false;//找到了重复的 跳过此次i的计数
-									  break;
-								}
-						}
-				}
-				if(add==false){
-					  continue;//跳过此次循环 执行下一次
-				}
+//			  add=true;
+//				if(i>=1){
+//						for(j=0;j<i;j++){
+//								if(rt_strcmp(packFlash.diginput[i].devID,packFlash.diginput[j].devID)==0){
+//										add=false;//找到了重复的 跳过此次i的计数
+//									  break;
+//								}
+//						}
+//				}
+//				if(add==false){
+//					  continue;//跳过此次循环 执行下一次
+//				}
 				if(packFlash.diginput[i].workFlag==RT_TRUE){
 						nodeobj = cJSON_CreateObject();
 						cJSON_AddItemToArray(Array, nodeobj);
-						cJSON_AddItemToObject(nodeobj,"model",  cJSON_CreateString(packFlash.diginput[i].model));
-						cJSON_AddItemToObject(nodeobj,"name",   cJSON_CreateString(packFlash.diginput[i].name));
-						cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(packFlash.diginput[i].devID));
+					nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+						cJSON_AddItemToObject(nodeobj_p,"model",  cJSON_CreateString(packFlash.diginput[i].model));
+						cJSON_AddItemToObject(nodeobj_p,"name",   cJSON_CreateString(packFlash.diginput[i].name));
+						cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(packFlash.diginput[i].devID));
+					  cJSON_AddNumberToObject(nodeobj_p,"type",SWITCH_CONTROL);
 				}
 		 }
 ////////////////////////////////////////////////数字输出打包////////////////////////////////////////////////////
 		 for(i=0;i<DO_NUM;i++){
-			  add=true;
-				if(i>=1){
-						for(j=0;j<i;j++){
-								if(rt_strcmp(packFlash.digoutput[i].devID,packFlash.digoutput[j].devID)==0){
-										add=false;//找到了重复的 跳过此次i的计数
-									  break;
-								}
-						}
-				}
-				if(add==false){
-					  continue;//跳过此次循环 执行下一次
-				}
+//			  add=true;
+//				if(i>=1){
+//						for(j=0;j<i;j++){
+//								if(rt_strcmp(packFlash.digoutput[i].devID,packFlash.digoutput[j].devID)==0){
+//										add=false;//找到了重复的 跳过此次i的计数
+//									  break;
+//								}
+//						}
+//				}
+//				if(add==false){
+//					  continue;//跳过此次循环 执行下一次
+//				}
 				if(packFlash.digoutput[i].workFlag==RT_TRUE){
 						nodeobj = cJSON_CreateObject();
 						cJSON_AddItemToArray(Array, nodeobj);
-						cJSON_AddItemToObject(nodeobj,"model",   cJSON_CreateString(packFlash.digoutput[i].model));
-						cJSON_AddItemToObject(nodeobj,"name",    cJSON_CreateString(packFlash.digoutput[i].name));
-						cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(packFlash.digoutput[i].devID));
+					nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+						cJSON_AddItemToObject(nodeobj_p,"model",   cJSON_CreateString(packFlash.digoutput[i].model));
+						cJSON_AddItemToObject(nodeobj_p,"name",    cJSON_CreateString(packFlash.digoutput[i].name));
+						cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(packFlash.digoutput[i].devID));
+					  cJSON_AddNumberToObject(nodeobj_p,"type",SWITCH_CONTROL);
 				}
 		 }
 ////////////////////////////////////////////////输出3V3打包////////////////////////////////////////////////////
 		 for(i=0;i<V33O_NUM;i++){
-			  add=true;
-				if(i>=1){
-						for(j=0;j<i;j++){
-								if(rt_strcmp(packFlash.v33output[i].devID,packFlash.v33output[j].devID)==0){
-										add=false;//找到了重复的 跳过此次i的计数
-									  break;
-								}
-						}
-				}
-				if(add==false){
-					  continue;//跳过此次循环 执行下一次
-				}
+//			  add=true;
+//				if(i>=1){
+//						for(j=0;j<i;j++){
+//								if(rt_strcmp(packFlash.v33output[i].devID,packFlash.v33output[j].devID)==0){
+//										add=false;//找到了重复的 跳过此次i的计数
+//									  break;
+//								}
+//						}
+//				}
+//				if(add==false){
+//					  continue;//跳过此次循环 执行下一次
+//				}
 				if(packFlash.v33output[i].workFlag==RT_TRUE){
 						nodeobj = cJSON_CreateObject();
 						cJSON_AddItemToArray(Array, nodeobj);
-						cJSON_AddItemToObject(nodeobj,"model",   cJSON_CreateString(packFlash.v33output[i].model));
-						cJSON_AddItemToObject(nodeobj,"name",    cJSON_CreateString(packFlash.v33output[i].name));
-						cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(packFlash.v33output[i].devID));
+					nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+						cJSON_AddItemToObject(nodeobj_p,"model",   cJSON_CreateString(packFlash.v33output[i].model));
+						cJSON_AddItemToObject(nodeobj_p,"name",    cJSON_CreateString(packFlash.v33output[i].name));
+						cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(packFlash.v33output[i].devID));
+					  cJSON_AddNumberToObject(nodeobj_p,"type",SWITCH_CONTROL);
 				}
 		 }
 ////////////////////////////////////////////////输出5V注册打包////////////////////////////////////////////////////
 		 for(i=0;i<V5O_NUM;i++){
-			  add=true;
-				if(i>=1){
-						for(j=0;j<i;j++){
-								if(rt_strcmp(packFlash.v5output[i].devID,packFlash.v5output[j].devID)==0){
-										add=false;//找到了重复的 跳过此次i的计数
-									  break;
-								}
-						}
-				}
-				if(add==false){
-					  continue;//跳过此次循环 执行下一次
-				}
+//			  add=true;
+//				if(i>=1){
+//						for(j=0;j<i;j++){
+//								if(rt_strcmp(packFlash.v5output[i].devID,packFlash.v5output[j].devID)==0){
+//										add=false;//找到了重复的 跳过此次i的计数
+//									  break;
+//								}
+//						}
+//				}
+//				if(add==false){
+//					  continue;//跳过此次循环 执行下一次
+//				}
 				if(packFlash.v5output[i].workFlag==RT_TRUE){
 						nodeobj = cJSON_CreateObject();
 						cJSON_AddItemToArray(Array, nodeobj);
-						cJSON_AddItemToObject(nodeobj,"model",   cJSON_CreateString(packFlash.v5output[i].model));
-						cJSON_AddItemToObject(nodeobj,"name",    cJSON_CreateString(packFlash.v5output[i].name));
-						cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(packFlash.v5output[i].devID));
+					nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+						cJSON_AddItemToObject(nodeobj_p,"model",   cJSON_CreateString(packFlash.v5output[i].model));
+						cJSON_AddItemToObject(nodeobj_p,"name",    cJSON_CreateString(packFlash.v5output[i].name));
+						cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(packFlash.v5output[i].devID));
+					  cJSON_AddNumberToObject(nodeobj_p,"type",SWITCH_CONTROL);
 				}
 		 }
 ////////////////////////////////////////////////输出12V注册打包////////////////////////////////////////////////////
 		 for(i=0;i<V12O_NUM;i++){
-			  add=true;
-				if(i>=1){
-						for(j=0;j<i;j++){
-								if(rt_strcmp(packFlash.v12output[i].devID,packFlash.v12output[j].devID)==0){
-										add=false;//找到了重复的 跳过此次i的计数
-									  break;
-								}
-						}
-				}
-				if(add==false){
-					  continue;//跳过此次循环 执行下一次
-				}
+//			  add=true;
+//				if(i>=1){
+//						for(j=0;j<i;j++){
+//								if(rt_strcmp(packFlash.v12output[i].devID,packFlash.v12output[j].devID)==0){
+//										add=false;//找到了重复的 跳过此次i的计数
+//									  break;
+//								}
+//						}
+//				}
+//				if(add==false){
+//					  continue;//跳过此次循环 执行下一次
+//				}
 				if(packFlash.v12output[i].workFlag==RT_TRUE){
 						nodeobj = cJSON_CreateObject();
 						cJSON_AddItemToArray(Array, nodeobj);
-						cJSON_AddItemToObject(nodeobj,"model",   cJSON_CreateString(packFlash.v12output[i].model));
-						cJSON_AddItemToObject(nodeobj,"name",    cJSON_CreateString(packFlash.v12output[i].name));
-						cJSON_AddItemToObject(nodeobj,"deviceId",cJSON_CreateString(packFlash.v12output[i].devID));
+					nodeobj_p= cJSON_CreateObject();
+									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
+						cJSON_AddItemToObject(nodeobj_p,"model",   cJSON_CreateString(packFlash.v12output[i].model));
+						cJSON_AddItemToObject(nodeobj_p,"name",    cJSON_CreateString(packFlash.v12output[i].name));
+						cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(packFlash.v12output[i].devID));
+					  cJSON_AddNumberToObject(nodeobj_p,"type",SWITCH_CONTROL);
 				}
 		 }
 	}

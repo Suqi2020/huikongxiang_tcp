@@ -223,10 +223,17 @@ void loopback_tcp(uint16 port)
 //				void netRecSendEvent();		
 //        netRecSendEvent();				//mqttLoopData();						     	         /*向Server发送数据*/
 			}		 
-      extern rt_bool_t 	gbNetState;		
+      extern rt_bool_t 	gbNetState;	
+      static bool regFlag=false;			
 			if(gbNetState!=RT_TRUE){
 					gbNetState =RT_TRUE;	
 					rt_kprintf("SOCK_ESTABLISHED\n");
+				  if(regFlag==false){
+								regFlag=true;//联网后只注册一次  后期由定时器实现反复注册
+								extern uint16_t devRegJsonPack();
+								devRegJsonPack();//devRegJsonPack();
+								rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER); 
+					}
 			}
 		  break;
 		case SOCK_CLOSE_WAIT: 											    	         /*socket处于等待关闭状态*/

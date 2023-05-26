@@ -6,6 +6,19 @@
 
 #define  MODL_LEN     8
 
+
+typedef  enum{
+		AIR_ENVIRONMENT=1,//(1, "空气环境"),  //包括温湿度 气体
+    WATER_LEVEL,//(2, "水位"),
+    DISCHARGE,//(3, "局放"),
+    GROUNDING_CURRENT,//(4, "环流"),
+    OPTICAL_FIBER,//(5, "光纤测温"),
+    VIBRATION,//(6, "外破"),
+    SETTLEMENT,//(7, "沉降"),
+    SWITCH_CONTROL,//(8, "风机/水泵");
+	  CRACK_TESTER,//(9,"裂缝仪");
+	  MANHOLE_COVER//(10,"井盖");
+}regTypeEnum;
 typedef enum{
 		USE_UART2=0,
 	  USE_UART3,
@@ -368,10 +381,10 @@ typedef struct{
 	    uint32_t  threeAxissColTime;
 #ifdef  USE_4GAS
 	    uint32_t  REV[3]; //此处不能省略 为了lcd显示指针自增来配置
-//			uint32_t  ch4ColTime;
-//	    uint32_t  o2ColTime;
-//			uint32_t  h2sColTime;
-			uint32_t  gasColTime;//用co的定时器来采集信息  去掉其他三个气体定时器  合并打包上传
+			uint32_t  ch4ColTime;
+	    uint32_t  o2ColTime;
+			uint32_t  h2sColTime;
+			uint32_t  coColTime;//用co的定时器来采集信息  去掉其他三个气体定时器  合并打包上传
 #endif
 			uint32_t  tempHumColTime;
 			uint32_t  waterDepthColTime;
