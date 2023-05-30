@@ -868,6 +868,61 @@
               <FileType>1</FileType>
               <FilePath>.\LCD7inch\lcdCoverCtrl.c</FilePath>
             </File>
+            <File>
+              <FileName>ringBuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\ringBuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdDispChoose.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdDispChoose.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdFangChenJiang.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdFangChenJiang.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdFangWaiPo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdFangWaiPo.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdGas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdGas.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdHuanLiu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdHuanLiu.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdJingGai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdJingGai.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdJuFang.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdJuFang.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdLieFengYi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdLieFengYi.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdShuiWei.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdShuiWei.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdWenShiDu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD7inch\lcdWenShiDu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

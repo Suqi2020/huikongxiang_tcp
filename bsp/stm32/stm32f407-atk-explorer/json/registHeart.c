@@ -63,10 +63,10 @@ uint16_t heartUpJsonPack()
 		sprintf(sprinBuf,"%llu",utcTime());
 		cJSON_AddStringToObject(root,"timestamp",sprinBuf);
 		nodeobj = cJSON_CreateObject();
-	  cJSON_AddStringToObject(nodeobj, "identifier","area_control_unit");
+	  cJSON_AddStringToObject(root, "identifier","area_control_unit");
 
 		//cJSON_AddItemToObject(nodeobj,"acuId",cJSON_CreateString((char *)"100000000000001"));
-		cJSON_AddItemToObject(root, "params", nodeobj);
+		//cJSON_AddItemToObject(root, "params", nodeobj);
 
 
 		//´ò°ü
@@ -535,7 +535,7 @@ uint16_t devRegJsonPack()
 								nodeobj_p= cJSON_CreateObject();
 									cJSON_AddItemToObject(nodeobj, "device", nodeobj_p);
 									cJSON_AddItemToObject(nodeobj_p,"model",cJSON_CreateString(sheet.co[j].model));
-									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString("QiTi"));//modbusName[i]
+									cJSON_AddItemToObject(nodeobj_p,"name",cJSON_CreateString(modbusName[i]));
 									cJSON_AddItemToObject(nodeobj_p,"deviceId",cJSON_CreateString(sheet.co[j].ID));
 								  cJSON_AddNumberToObject(nodeobj_p,"type",AIR_ENVIRONMENT);
 							}

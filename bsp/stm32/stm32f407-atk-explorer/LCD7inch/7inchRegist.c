@@ -10,10 +10,10 @@
 
 #include "7inchRegist.h"
 const static char sign[]="[LCD]";
-extern struct  rt_messagequeue LCDmque;
+//extern struct  rt_messagequeue LCDmque;
 
 uint8_t  sendLCDBuf[LCD_BUF_LEN];
-uint8_t  recLCDBuf[LCD_BUF_LEN];
+//uint8_t  recLCDBuf[LCD_BUF_LEN];
 
 
 

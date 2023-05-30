@@ -194,10 +194,14 @@
 //V1.11    增加时间戳同步后的写入flash中进行存储      20230523
 //V1.12    增加ID的重复性排查 保证ID的唯一性  4种气体分开上传 
 //V1.13    屏幕配置增加ID的重复提示 增加LCD显示密码登录 改动json注册打包格式
-#define APP_VER       ((1<<8)+13)//0x0105 表示1.5版本  20230516
+//V1.14    LCDTask任务优先级为2 w5500Task任务优先级为3的情况下 LCDTask会从串口队列中接收数据，导致W5500Task死掉  故降低优先级为4
+//V1.15    rt_mq_send(&LCDmque,&Res,1); // 往任务中发队列会丢数据  改成ringbuf    20230529
+//         更改氧气打包 oxy为oxygen
+//V1.16    增加传感器数据显示界面  修改qiti为硫化氢      20230530
+#define APP_VER       ((1<<8)+16)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230526";
+const char date[]="20230530";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -232,8 +236,8 @@ struct rt_event WDTEvent;
 
 
 //队列的定义
-struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
-uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
+//struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
+//uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
 //任务的定义
 extern  void   netDataRecTask(void *para);//网络数据接收
 extern  void   netDataSendTask(void *para);//网络数据发送
@@ -337,12 +341,12 @@ int main(void)
     {
         rt_kprintf("%screate lcdSend_mutex failed\n",sign);
     }
-		int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);       
-		if (ret != RT_EOK)
-		{
-				rt_kprintf("%sinit LCD msgque failed.\n",sign);
-				return -1;
-		}
+//		int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);       
+//		if (ret != RT_EOK)
+//		{
+//				rt_kprintf("%sinit LCD msgque failed.\n",sign);
+//				return -1;
+//		}
 		extern void 	uartMutexQueueCreate();
 		uartMutexQueueCreate();
 ////////////////////////////////////邮箱//////////////////////////////////
@@ -370,17 +374,17 @@ int main(void)
 		
 
 ////////////////////////////////任务////////////////////////////////////
-    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,3, 10 );
+    tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,2, 10 );
 		if(tidW5500!=NULL){
 				rt_thread_startup(tidW5500);													 
 				rt_kprintf("%sRTcreat w5500Task task\r\n",sign);
 		}
-		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,2, 10 );
+		tidNetRec =  rt_thread_create("netRec",netDataRecTask,RT_NULL,1024,3, 10 );
 		if(tidNetRec!=NULL){
 				rt_thread_startup(tidNetRec);													 
 				rt_kprintf("%sRTcreat netDataRecTask \r\n",sign);
 		}
-		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,2, 10 );
+		tidNetSend =  rt_thread_create("netSend",netDataSendTask,RT_NULL,1024,3, 10 );
 		if(tidNetSend!=NULL){
 				rt_thread_startup(tidNetSend);													 
 				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
@@ -392,7 +396,7 @@ int main(void)
 				rt_thread_startup(tidUpkeep);													 
 				rt_kprintf("%sRTcreat upKeepStateTask \r\n",sign);
 		}
-		tidLCD    =  rt_thread_create("LCD",LCDTask,RT_NULL,512*3,2, 10 );
+		tidLCD    =  rt_thread_create("LCD",LCDTask,RT_NULL,512*3,1, 10 );
 		if(tidLCD!=NULL){
 				rt_thread_startup(tidLCD);													 
 				rt_kprintf("%sRTcreat LCDStateTask \r\n",sign);

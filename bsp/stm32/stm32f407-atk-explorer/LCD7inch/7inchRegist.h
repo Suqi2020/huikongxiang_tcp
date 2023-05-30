@@ -103,6 +103,14 @@
 #define   KEY_MODBUSDISP_ERRLAST_ADDR  0X150C
 #define   KEY_MODBUSDISP_ERRNEXT_ADDR  0X150E
 
+
+
+
+
+#define  TEST_CHOOSE_MODBUS_ADDR       0X2000
+#define  KEY_SURE_CHOOSE_MODBUS_ADDR       0X2010
+#define  KEY_LAST_CHOOSE_MODBUS_ADDR       0X2012
+#define  KEY_NEXT_CHOOSE_MODBUS_ADDR       0X2014
 //////////////////////////////////////////////////////////////
 //开关控制界面
 #define   KEY_SWITCH_INTERFACE_ADDR    0x5400
@@ -319,6 +327,8 @@
 #define   KEY_INPUT_ADDR     			  0X1A0C
 #define   KEY_OUTPUT_ADDR   				0X1A0E
 #define   KEY_MODUBS_ADDR  					0X1A0A
+
+#define   KEY_MODUBS_DATA_ADDR  					0X1A10
 #define   KEY_COVER_DISPLAY_ADDR    0x1A16
 #define   NET_ERR_DISPLAY_ADDR      0X1A20
 #define   MODBUS_ERR_DISPLAY_ADDR   0X1A22
@@ -326,7 +336,7 @@
 #define   KEY_PASSWD_ENTER_ADDR     0X1A1A
 #define   TEXT_PASSWD_ADDR          0X1A24
 #define   KEY_PASSWD_SURE_ADDR      0X1A2E
-#define   TEXT_ERR_PASSWD_DISP_ADDR  0X1A30
+//#define   TEXT_ERR_PASSWD_DISP_ADDR  0X1A30
 
 //////////////////////////////////////////////////////////////
 //kenal lcd command
@@ -336,7 +346,7 @@
 #define   LCD_WRITE      0X82
 #define   LCD_READ       0X83
 #define   LCD_RUN        0X4F4B
-#define   LCD_BUF_LEN    100
+
 
 
 #define  KEY_ADDR  			0X0000

@@ -80,9 +80,9 @@ void readO2(int num)
 
 		int ret2=modbusRespCheck(sheet.o2[num].slaveAddr,buf,len,RT_TRUE);
 		if(0 == ret2){//刷新读取到的值
-        int val	=(buf[offset]<<24)+(buf[offset+1]<<16)+(buf[offset+2]<<8)+buf[offset+3];offset+=4;
+        uint32_t val	=((uint32_t)buf[offset]<<24)+((uint32_t)buf[offset+1]<<16)+((uint32_t)buf[offset+2]<<8)+buf[offset+3];offset+=4;
 
-        o2[num]=(float)((float)val	/1000);
+        o2[num]=(float)((float)val	/100);
 			  respStat[num]=1;
 				o2CheckSetFlag(num);
 			  rt_kprintf("%s浓度值:%0.2fmol/Lread ok\n",sign,o2[num]);  
@@ -156,7 +156,7 @@ static uint16_t o2Pack(bool respFlag)
 				cJSON_AddItemToObject(nodeobj, "data", nodeobj_p);
 
 					sprintf(sprinBuf,"%02f",o2[i]);
-					cJSON_AddItemToObject(nodeobj_p,"oxy",cJSON_CreateString(sprinBuf));
+					cJSON_AddItemToObject(nodeobj_p,"oxygen",cJSON_CreateString(sprinBuf));
 
 			
 				sprintf(sprinBuf,"%llu",utcTime());

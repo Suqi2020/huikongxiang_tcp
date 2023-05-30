@@ -11,7 +11,7 @@ extern void LDCDispMosbusInfo(void);
 //extern void LCDDispModInfoCpy(void);
 extern void LCDDispConfig(uint8_t *recBuf,int len);
 extern void firstNameDispInit(void);
-extern uint8_t  recLCDBuf[LCD_BUF_LEN];
+//extern uint8_t  recLCDBuf[LCD_BUF_LEN];
 
 
 
@@ -31,13 +31,16 @@ extern uint8_t  recLCDBuf[LCD_BUF_LEN];
 //	}
 //		rt_kprintf("\n ");
 //}
+ uint8_t lcdRecBuf[LCD_BUF_LEN];
+uint8_t  lcdRecLen;
 void  LCDTask(void *parameter)
 {
 	  extern void LCDDispErrMosbusState();
     extern void LCDDispNetErrState();
 	  extern void LCDDispErrModbusGet();
 		extern void LDCDispErrMosbusInfo();
-
+	  
+		RingBuff_Init();
 	  rt_thread_mdelay(1000);//必须加入延时等待串口屏启动
 	//testfun();
 	  LCDDispIP();
@@ -46,28 +49,44 @@ void  LCDTask(void *parameter)
 	  LCDDispModbusGet();
 	  //firstNameDispInit();
   	LDCDispMosbusInfo();
-	  int revLen=0;
+	 // int revLen=0;
 	  int dispCount=0;
 	
     extern void LCDDispRstOK();
 		LCDDispRstOK();
+	  //int bodyLen=0;
+
 		while(1){
 			//rt_thread_delay(1000);
-				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){
-						revLen++;
-						while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 2) == RT_EOK){
-								revLen++;
+//				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){
+//						revLen++;
+//						while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 10) == RT_EOK){
+//								revLen++;
+//						}
+//				}
+			  rt_thread_mdelay(50);
+			  while(true== Read_RingBuff(lcdRecBuf+lcdRecLen)){
+						rt_thread_mdelay(2);
+					  lcdRecLen++;
+					
+							if(((uint16_t)(lcdRecBuf[0]<<8)+lcdRecBuf[1])==LCD_HEAD){
+								 if(lcdRecLen>=3+lcdRecBuf[02])//一包数据收满 跳出
+									 break;
+							
 						}
 				}
-				if(revLen){
-						 LCDDispConfig(recLCDBuf,revLen);
-					   rt_kprintf("%srevLen:%d\n","[LCDTASK]",revLen);
-					   for(int j=0;j<revLen;j++)
-					     rt_kprintf("%02x ",recLCDBuf[j]);
-					rt_kprintf("\n ");
-						 revLen=0;
+				if(lcdRecLen){
+					rt_kprintf("lcdRecLen:%d\n",lcdRecLen);
+						LCDDispConfig(lcdRecBuf,lcdRecLen);
+
+						for(int j=0;j<lcdRecLen;j++)
+						rt_kprintf("%02x ",lcdRecBuf[j]);
+						rt_kprintf("\n ");
+            //bodyLen=0;
+						lcdRecLen=0;
+					
 				}
-				if(++dispCount>=60){
+				if(++dispCount>=1200){
 						dispCount=0;
 						LCDDispNetOffline();
 						LCDDispNetErrState();

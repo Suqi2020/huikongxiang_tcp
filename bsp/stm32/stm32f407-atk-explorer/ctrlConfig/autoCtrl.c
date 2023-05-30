@@ -574,14 +574,14 @@ static bool  ctrlCoverConf(char **argv)
 											return true;
 									}
 							}
-							else if(strcmp(argv[4],"switch")==0){//A
+							else if(strcmp(argv[4],"switch2")==0){//A
 									if(limit==0){//下限
-											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switchLowFlag;
+											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switch2LowFlag;
 											
 											return true;// true;
 									}
 									else{
-											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switchUpFlag;
+											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switch2UpFlag;
 											
 											return true;
 									}
@@ -594,6 +594,18 @@ static bool  ctrlCoverConf(char **argv)
 									}
 									else{
 											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].vibrationUpFlag;
+											
+											return true;
+									}
+							}
+							else if(strcmp(argv[4],"switch1")==0){//A
+									if(limit==0){//下限
+											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switch1LowFlag;
+											
+											return true;// true;
+									}
+									else{
+											sheet.autoctrl[pindex].input[inputIndex].flag=(uint32_t*)&inpoutpFlag.modbusCover[i].switch1UpFlag;
 											
 											return true;
 									}

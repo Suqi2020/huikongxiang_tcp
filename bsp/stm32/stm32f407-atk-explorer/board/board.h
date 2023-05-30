@@ -29,7 +29,7 @@
 #define  	INNAME_NUM    	3
 #define  	OUTNAME_NUM   	4
 #define   USE_4GAS
-
+#define   LCD_BUF_LEN    100
 #define   ANA_MASK       //ÆÁ±Îana
 
 
@@ -43,7 +43,7 @@
 #include "drv_flash.h"
 #include "test_hardware.h"
 #include "main.h"
-//#include "W5500p.h"	
+
 #include "W5500Task.h"
 #include "w5500_conf.h"
 #include "w5500.h"
@@ -61,6 +61,7 @@
 #include "stmflash.h"
 #include "7inchRegist.h"
 #include "ctrlConfig.h"
+#include "ringbuf.h"	
 //#include "rs485ThreeAxis.h"
 //#include "rs485Circula.h"
 //#include "rs485PartDischag.h"

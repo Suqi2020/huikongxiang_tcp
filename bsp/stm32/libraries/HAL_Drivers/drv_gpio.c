@@ -739,7 +739,7 @@ void EXTI15_10_IRQHandler(void)
 	  //rt_kprintf("irq:w5500\n");
 	
 	
-	  rt_sem_release(w5500Iqr_semp);
+//	  rt_sem_release(w5500Iqr_semp);
 
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);

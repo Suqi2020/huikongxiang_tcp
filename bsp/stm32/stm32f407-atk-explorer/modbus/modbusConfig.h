@@ -90,11 +90,12 @@ typedef struct{
 typedef struct{
 	  uint8_t inclineUpLimit;
 	  uint8_t inclineLowLimit;
-	  uint8_t switchUpLimit;
-	  uint8_t switchLowLimit;
+	  uint8_t switch1UpLimit;
+	  uint8_t switch1LowLimit;
 	  uint8_t vibrationUpLimit;
 	  uint8_t vibrationLowLimit;
-	  uint8_t rev[2];
+	  uint8_t switch2UpLimit;
+	  uint8_t switch2LowLimit;
 }coverStru_p;
 typedef struct{
 		uint32_t  tempUpFlag;//阈值超限的标记
@@ -115,11 +116,13 @@ typedef struct{
 typedef struct{
 	  uint8_t inclineUpFlag;
 	  uint8_t inclineLowFlag;
-	  uint8_t switchUpFlag;
-	  uint8_t switchLowFlag;
+	  uint8_t switch2UpFlag;
+	  uint8_t switch2LowFlag;
 	  uint8_t vibrationUpFlag;
 	  uint8_t vibrationLowFlag;
-	  uint8_t rev[2];
+	
+	  uint8_t switch1UpFlag;
+	  uint8_t switch1LowFlag;
 }coverFlagStru;
 typedef struct
 {

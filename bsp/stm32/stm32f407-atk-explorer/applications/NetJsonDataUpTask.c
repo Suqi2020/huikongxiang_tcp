@@ -139,7 +139,7 @@ static void  timeOutRunFun()
 					  devRegJsonPack();//devRegJsonPack();
 					  if(gbNetState==RT_TRUE)
 								rt_mb_send_wait(&mbNetSendData, (rt_ubase_t)&packBuf,RT_WAITING_FOREVER); 
-					  timeStop(REG_TIME);//正式使用时候需要去掉
+					//  timeStop(REG_TIME);//正式使用时候需要去掉
 						if(gbNetState==RT_TRUE){
 							  digitalInputReport();//数字输入上报
 								rt_thread_delay(500);

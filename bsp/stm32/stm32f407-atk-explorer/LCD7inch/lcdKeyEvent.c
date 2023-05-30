@@ -92,7 +92,16 @@ void coverNextDisp(void);
 void coverNowDisp(void);
 void LCDDispNetErrState(void);
 bool surePassWord(void);
-void LCDRstErrPw(void);
+void LCDRstPw(void);
+
+void dispChooseModbusName();
+
+void  nextModName();
+
+void  lastModName();
+void  changeBmp(int num);
+
+extern int modbusChosIndex;
 #ifndef     ANA_MASK
 void lcdAnaConfig(void);
 void  delOneAna(void);
@@ -106,6 +115,21 @@ void  keyReturn(uint16_t keyAddr)
 	 // int nameLen=0;
 		switch(keyAddr)
 		{
+			
+			case KEY_SURE_CHOOSE_MODBUS_ADDR:
+				changeBmp(71+modbusChosIndex);
+				break;
+			case KEY_LAST_CHOOSE_MODBUS_ADDR:
+				lastModName();
+			  dispChooseModbusName();
+				break;
+			case KEY_NEXT_CHOOSE_MODBUS_ADDR:
+				nextModName();
+			  dispChooseModbusName();
+				break;
+			case KEY_MODUBS_DATA_ADDR:
+				dispChooseModbusName();
+				break ;		
 			case	KEY_MODBUS_CFG_NAME_ADDR://点击传感器设置名称显示框调出 模糊界面  显示到1380
 				//5A A5 1182 1380 C9CF BAA3 B9C8 D4AA BFC6 BCBC FFFF
         dispCinaName(buf);
@@ -362,7 +386,7 @@ void  keyReturn(uint16_t keyAddr)
 				coverNowDisp();
 				break;
 			case KEY_PASSWD_ENTER_ADDR:
-				LCDRstErrPw();
+				LCDRstPw();
 				break;
 			case KEY_PASSWD_SURE_ADDR:
 				surePassWord();
@@ -466,6 +490,7 @@ void lcdCopyAnaPort(uint8_t *rec);
 //拷贝输入的time到AnaInput中
 void lcdCopyAnaTime(uint8_t *rec);
 bool checkPassWord(char *rec);
+void LCDHidePssd();
 //lcd 发来的配置解析
 void LCDDispConfig(uint8_t *recBuf,int len)
 {
@@ -626,7 +651,7 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 				break;
       case TEXT_PASSWD_ADDR://密码长度最大8位
 				pwssWdRet=checkPassWord((char *)recBuf);
-
+				LCDHidePssd();
 				break;
  			case DISP_OUTPUT_TYPE_ADDR:
 				lcdCopyOutputModel(recBuf);
@@ -652,6 +677,15 @@ void LCDDispConfig(uint8_t *recBuf,int len)
 		}
 }
 
+void LCDHidePssd()
+{
+	 uint8_t buf[10]="********";
+	 buf[8]=0xff;
+	 buf[9]=0xff;
+	
+	 LCDWtite(TEXT_PASSWD_ADDR,buf,10);
+	
+}
 void LCDClearSaveOK()
 {
 	 uint8_t buf[2];
@@ -732,22 +766,22 @@ bool checkPassWord(char *rec)
 
 
 
-void LCDDispErrPasswd()
-{
-		uint8_t buf[14]="ERROR!";
-		buf[7]=0xff;
-		buf[8]=0xff;
-	
-	  LCDWtite(TEXT_ERR_PASSWD_DISP_ADDR,buf,9);
-}
-//LCD复位错误的pwd信息提示
-void LCDRstErrPw()
+//void LCDDispErrPasswd()
+//{
+//		uint8_t buf[14]="ERROR!";
+//		buf[7]=0xff;
+//		buf[8]=0xff;
+//	
+//	  LCDWtite(TEXT_ERR_PASSWD_DISP_ADDR,buf,9);
+//}
+////LCD复位错误的pwd信息提示
+void LCDRstPw()
 {
 		uint8_t buf[4]="";
 		buf[0]=0xff;
 		buf[1]=0xff;
 	
-	  LCDWtite(TEXT_ERR_PASSWD_DISP_ADDR,buf,2);
+
 	  LCDWtite(TEXT_PASSWD_ADDR,buf,2);
 	
 }
@@ -757,18 +791,33 @@ void LCDRstErrPw()
 //password 确认按键
 bool  surePassWord()
 {
-	  uint8_t buf[10]={0X5A,0XA5,0X07,0X82,0,0X84,0X5A,0X01,0,2};//最后一个0002 表示切换到02图
+	  //uint8_t buf[10]={0X5A,0XA5,0X07,0X82,0,0X84,0X5A,0X01,0,2};//最后一个0002 表示切换到02图
 		if(pwssWdRet==true){	
 				rt_kprintf("%sPassword ok\n",sign);
-			  LCDRstErrPw();
-				extern rt_mutex_t   lcdSend_mutex;
-				rt_mutex_take(lcdSend_mutex,RT_WAITING_FOREVER);
-				extern  void LCDDataSend(uint8_t *buf,int lenth);
-				LCDDataSend(buf,sizeof(buf));
-				rt_mutex_release(lcdSend_mutex);
+			  LCDRstPw();
+//				extern rt_mutex_t   lcdSend_mutex;
+//				rt_mutex_take(lcdSend_mutex,RT_WAITING_FOREVER);
+//				extern  void LCDDataSend(uint8_t *buf,int lenth);
+//				LCDDataSend(buf,sizeof(buf));
+//				rt_mutex_release(lcdSend_mutex);
+			  changeBmp(2);
+			  pwssWdRet=false;
 		}
 		else{
+			  changeBmp(3);
 				rt_kprintf("%sPassword err\n",sign);
-			  LCDDispErrPasswd();
+//			  LCDDispErrPasswd();
 		}
+}
+
+
+void changeBmp(int num)
+{
+		uint8_t buf[10]={0X5A,0XA5,0X07,0X82,0,0X84,0X5A,0X01,0,0};
+		buf[9]=num;
+		extern rt_mutex_t   lcdSend_mutex;
+		rt_mutex_take(lcdSend_mutex,RT_WAITING_FOREVER);
+		extern  void LCDDataSend(uint8_t *buf,int lenth);
+		LCDDataSend(buf,sizeof(buf));
+		rt_mutex_release(lcdSend_mutex);
 }

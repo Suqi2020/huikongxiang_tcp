@@ -693,8 +693,12 @@ void UART4_DMA_TX_IRQHandler(void)
 #endif /* BSP_USING_UART4*/
 
 #if defined(BSP_USING_UART5)
-extern struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
-extern uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
+//extern struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
+//extern uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
+
+
+// uint8_t lcdRecBuf[LCD_BUF_LEN]={0};
+// uint8_t  lcdRecLen=0;
 void UART5_IRQHandler(void)
 {
     /* enter interrupt */
@@ -710,7 +714,11 @@ void UART5_IRQHandler(void)
 			  
 				HAL_UART_Receive(&huart5,&Res,1,1000); 
 //			  rt_kprintf("*%02x*\n",Res);
-			  rt_mq_send(&LCDmque,&Res,1);
+			  //rt_mq_send(&LCDmque,&Res,1); // 往任务中发队列会丢数据  suqi
+//			  if(lcdRecLen<LCD_BUF_LEN)
+//						lcdRecBuf[lcdRecLen++]=Res;
+				Write_RingBuff(Res);
+				//recTestLen++;
 		}
 		HAL_UART_IRQHandler(&huart5);	
 #endif
@@ -759,7 +767,7 @@ void USART6_IRQHandler(void)
 //			  rt_kprintf("read\n");
 				HAL_UART_Receive(&huart6,&Res,1,1000); 
 			  uartDataRec(USE_UART6,Res);
-			
+
 		}
 		HAL_UART_IRQHandler(&huart6);	
 		#endif

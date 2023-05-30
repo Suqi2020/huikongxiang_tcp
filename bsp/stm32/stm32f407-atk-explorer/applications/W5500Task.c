@@ -4,7 +4,7 @@
 //w5500联网状态的维护 
 const static char task[]="[w55task]";
 
-rt_sem_t  w5500Iqr_semp = RT_NULL;//w5500有数据时候中断来临
+//rt_sem_t  w5500Iqr_semp = RT_NULL;//w5500有数据时候中断来临
 
 /***************----- 网络参数变量定义 -----***************/
 //unsigned char Gateway_IP[4];//网关IP地址 
