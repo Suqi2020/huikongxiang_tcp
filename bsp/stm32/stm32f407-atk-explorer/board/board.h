@@ -31,7 +31,7 @@
 #define   USE_4GAS
 #define   LCD_BUF_LEN    100
 #define   ANA_MASK       //ÆÁ±Îana
-
+//#define   USE_RINGBUF    1
 
 //#incude  <iconv.h>
 #include <rtthread.h>
@@ -62,6 +62,7 @@
 #include "7inchRegist.h"
 #include "ctrlConfig.h"
 #include "ringbuf.h"	
+#include "modbusData.h"	
 //#include "rs485ThreeAxis.h"
 //#include "rs485Circula.h"
 //#include "rs485PartDischag.h"

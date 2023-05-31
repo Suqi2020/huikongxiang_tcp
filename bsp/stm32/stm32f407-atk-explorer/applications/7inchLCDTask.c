@@ -2,7 +2,11 @@
 #include   "board.h"
 //5A A5 0B 82 009C 5AA5 17 03 1E 0F 2A 00 
 //时间配置      17 03 1E 0F 2A 00  为年月日时分秒配置
+#if   USE_RINGBUF
+
+#else
 extern struct  rt_messagequeue LCDmque;
+#endif
 extern void LCDDispIP(void);
 extern void LCDDispUart(void);
 extern void LCDDispMCUID(void);
@@ -11,6 +15,7 @@ extern void LDCDispMosbusInfo(void);
 //extern void LCDDispModInfoCpy(void);
 extern void LCDDispConfig(uint8_t *recBuf,int len);
 extern void firstNameDispInit(void);
+extern void LCDDispNetOffline(void);
 //extern uint8_t  recLCDBuf[LCD_BUF_LEN];
 
 
@@ -39,8 +44,12 @@ void  LCDTask(void *parameter)
     extern void LCDDispNetErrState();
 	  extern void LCDDispErrModbusGet();
 		extern void LDCDispErrMosbusInfo();
-	  
-		RingBuff_Init();
+#if   USE_RINGBUF
+    RingBuff_Init();
+#else
+		 
+#endif
+		
 	  rt_thread_mdelay(1000);//必须加入延时等待串口屏启动
 	//testfun();
 	  LCDDispIP();
@@ -49,7 +58,7 @@ void  LCDTask(void *parameter)
 	  LCDDispModbusGet();
 	  //firstNameDispInit();
   	LDCDispMosbusInfo();
-	 // int revLen=0;
+	  //int revLen=0;
 	  int dispCount=0;
 	
     extern void LCDDispRstOK();
@@ -58,12 +67,10 @@ void  LCDTask(void *parameter)
 
 		while(1){
 			//rt_thread_delay(1000);
-//				if(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 1000) == RT_EOK){
-//						revLen++;
-//						while(rt_mq_recv(&LCDmque, recLCDBuf+revLen, 1, 10) == RT_EOK){
-//								revLen++;
-//						}
-//				}
+
+			
+			
+#if   USE_RINGBUF
 			  rt_thread_mdelay(50);
 			  while(true== Read_RingBuff(lcdRecBuf+lcdRecLen)){
 						rt_thread_mdelay(2);
@@ -75,6 +82,25 @@ void  LCDTask(void *parameter)
 							
 						}
 				}
+#else
+			
+				if(rt_mq_recv(&LCDmque, lcdRecBuf+lcdRecLen, 1, 1000) == RT_EOK){
+						lcdRecLen++;
+						while(rt_mq_recv(&LCDmque, lcdRecBuf+lcdRecLen, 1, 2) == RT_EOK){
+								lcdRecLen++;
+								if(((uint16_t)(lcdRecBuf[0]<<8)+lcdRecBuf[1])==LCD_HEAD){
+									 if(lcdRecLen>=3+lcdRecBuf[02])//一包数据收满 跳出
+										 break;
+								
+								}
+						}
+				}		
+#endif
+
+				
+				
+				
+				
 				if(lcdRecLen){
 					rt_kprintf("lcdRecLen:%d\n",lcdRecLen);
 						LCDDispConfig(lcdRecBuf,lcdRecLen);
@@ -86,7 +112,7 @@ void  LCDTask(void *parameter)
 						lcdRecLen=0;
 					
 				}
-				if(++dispCount>=1200){
+				if(++dispCount>=60){
 						dispCount=0;
 						LCDDispNetOffline();
 						LCDDispNetErrState();

@@ -15,29 +15,7 @@
 // rs485Circula.c-cirCurrUartSend(uint8_t *buf,int len) 和drv_uart.c-USART2_IRQHandler中
 // cirCurrUartSend(uint8_t *buf,int len)   cirCurrUartRec(uint8_t dat)
 static  bool alarmFLag=false;
-typedef struct
-{
-	  //环流值 放大了100倍
-		float circlCurA;
-		float circlCurB;
-	  float circlCurC;
-	  float circlCurD;//备用
-	  //阈值
-	  //uint32_t thresholdVal;
 
-	  
-	  //报警状态  一个字节足够 方便对接modbus回应
-	  uint16_t warningA;
-	  uint16_t warningB;
-	  uint16_t warningC;
-	  uint16_t warningD;
-	  
-	  //采集间隔 单位秒
-		//uint16_t AcqInterv;
-	//小数点计算数值
-    uint16_t point; //非modbus真实值  此处读取modbus后经过了转换便于直接计算  0-值为100  1-2 值为10
-	  uint8_t respStat;
-} CIRCURStru;
 
 const static char sign[]="[环流]";
 
@@ -509,15 +487,20 @@ bool modCirCurrWarn2Send()
 
 
 
+
+
+extern int dispHuanliuTotlNum;
 //环流读取并打包发送  仅仅做封装而已
 	//输入 respFlag 为true就是回应
 //              为false就是report数据
 void circulaRead2Send(rt_bool_t netStat,bool respFlag)
 {					
+	  dispHuanliuTotlNum=0;
 		int workFlag=RT_FALSE;
 		for(int i=0;i<CIRCULA_485_NUM;i++){
 			if(sheet.cirCula[i].workFlag==RT_TRUE){
 						readCirCurrAndWaring(i);
+				    dispHuanliuTotlNum++;
 						workFlag=RT_TRUE;
 				}
 		}
@@ -535,4 +518,7 @@ void circulaRead2Send(rt_bool_t netStat,bool respFlag)
 				}
 		}
 }
+
+
+
 

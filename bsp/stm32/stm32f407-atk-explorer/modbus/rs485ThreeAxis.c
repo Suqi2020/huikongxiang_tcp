@@ -16,13 +16,7 @@
 //[防外破]threeAxis send:9  4  0  1  0  4 a1 41 
 // 收         01 04 08 0B CA FE 8D 00 03 03 80 C7 23 
 //[防外破]rec: 9  4  6  b 73  0 9a  0 17 fc 32 69 b4
-typedef struct{
-		float temp;
-	  uint16_t acclrationX;
-		uint16_t acclrationY;
-		uint16_t acclrationZ;
-	  uint8_t  respStat;
-}threeAxisStru;
+
 const static char sign[]="[防外破]";
 threeAxisStru threeAxisp[THREEAXIS_485_NUM];
 //返回三轴的通讯状态 true--通讯成功 false--通讯失败
@@ -486,15 +480,17 @@ bool modThreeAxisWarn2Send()
 
 
 
-
+extern int dispWaipoTotlNum;
 
 //三轴读取modbus数据并打包发送 给其它函数调用
 void threeAxisRead2Send(rt_bool_t netStat,bool respFlag)
 {					
 		int workFlag=RT_FALSE;
+	  dispWaipoTotlNum=0;
 		for(int i=0;i<THREEAXIS_485_NUM;i++){
 				if(sheet.threeAxiss[i].workFlag==RT_TRUE){
 							readThreeTempAcc(i);
+					    dispWaipoTotlNum++;
 							workFlag=RT_TRUE;
 					}
 			}

@@ -9,30 +9,7 @@
 //同时局放每次读取完通道再读取图谱 由于图谱非常大 2700个寄存器值  格式化为字符串以及加上标点后比较大
 //所有ABC三项的图谱读取完成后分别上传给子站
 
- typedef struct  
- { 
-  unsigned a:1; 
-  unsigned b:3; 
-  unsigned c:4; 
- } bs; 
- 
-//局放读取用到的参数定义 不包括图谱
-typedef struct{
-		uint32_t amplitudeA;
-	  uint32_t freqA;
-	  uint32_t dischargeA;
-	
-		uint32_t amplitudeB;
-		uint32_t freqB;
-		uint32_t dischargeB;
 
-		uint32_t amplitudeC;
-		uint32_t freqC;
-		uint32_t dischargeC;
-	
-	  bs alarm;  //bit0 A bit1 B bit2 C
-	  uint8_t respStat;
-}partDischargeStru;
 
 const static char sign[]="[局放]";
 partDischargeStru partDiscStru_p[PARTDISCHAG_485_NUM];
@@ -815,12 +792,16 @@ bool modPartDischagWarn2Send()
 		return true;
 }
 
+
+extern int dispJufangTotlNum;
 //局放的读取和发送  供其他函数来调用
 void partDischagRead2Send(rt_bool_t netStat,bool respFlag)
 {
 		int workFlag=RT_FALSE;
+	  dispJufangTotlNum=0;
 		for(int i=0;i<PARTDISCHAG_485_NUM;i++){
 			 if(sheet.partDischag[i].workFlag==RT_TRUE){
+				    dispJufangTotlNum++;
 				    rt_thread_mdelay(2000);
 						readPdFreqDischarge(i);
 						workFlag=RT_TRUE;

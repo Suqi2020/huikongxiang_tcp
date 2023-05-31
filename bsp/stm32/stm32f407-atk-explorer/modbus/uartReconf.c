@@ -15,7 +15,12 @@ const static char sign[]="[uartRecfg]";
 struct  rt_messagequeue uartmque[UART_NUM];//= {RT_NULL} ;//创建4个串口的队列
 static uint8_t uartQuePool[UART_NUM][MSGPOOL_LEN];  //创建4个串口的队列池
 
-
+#if   USE_RINGBUF
+				
+#else
+			extern struct  rt_messagequeue LCDmque;
+			extern uint8_t LCDQuePool[LCD_BUF_LEN];  
+#endif
 //创建环流用到的互斥量和消息队列
 void  uartMutexQueueCreate()
 {
@@ -31,7 +36,8 @@ void  uartMutexQueueCreate()
 //////////////////////////////////消息队列/////////////////////////////////
 					sprintf(str,"uart%dMsgque",i);
 					int result = rt_mq_init(&uartmque[i],str,uartQuePool+i,1,MSGPOOL_LEN,RT_IPC_FLAG_FIFO);  		
-//			  	int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);   
+
+//			  	 
 //					 result = rt_mq_init(&uartmque[i],str,&uartQuePool[i][0],1,MSGPOOL_LEN,RT_IPC_FLAG_FIFO);  						 
 					if (result != RT_EOK)
 					{

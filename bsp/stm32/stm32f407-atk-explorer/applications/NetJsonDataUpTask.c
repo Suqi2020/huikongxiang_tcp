@@ -247,7 +247,7 @@ void startTimeList()
 		timeInit(CRACKMETER_TIME, 16,50);
 		#else 
 		timeInit(HEART_TIME,      120,2);//心跳定时  定时30秒 第一次28秒就来
-		timeInit(REG_TIME,        5,0);//注册 注册成功后定时器就关闭
+		timeInit(REG_TIME,        60,0);//注册 注册成功后定时器就关闭
 
 		timeInit(CIRCULA_TIME, 		sheet.cirCulaColTime,5);
 		timeInit(PARTDISCHAG_TIME,sheet.partDischagColTime,10);

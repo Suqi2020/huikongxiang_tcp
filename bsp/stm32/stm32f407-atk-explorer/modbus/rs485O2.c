@@ -82,7 +82,7 @@ void readO2(int num)
 		if(0 == ret2){//刷新读取到的值
         uint32_t val	=((uint32_t)buf[offset]<<24)+((uint32_t)buf[offset+1]<<16)+((uint32_t)buf[offset+2]<<8)+buf[offset+3];offset+=4;
 
-        o2[num]=(float)((float)val	/100);
+        o2[num]=(float)((float)val	/1000);
 			  respStat[num]=1;
 				o2CheckSetFlag(num);
 			  rt_kprintf("%s浓度值:%0.2fmol/Lread ok\n",sign,o2[num]);  

@@ -9,15 +9,7 @@ static  bool alarmFLag=false;
 //#define   SLAVE_ADDR     0X02 
 //#define   LENTH          50  //工作环流用到的最大接收buf长度
 
-typedef struct{
-	  float temp;//除以100 传输float类型  单位0C
-	   union {
-				float flotVal;
-				int   intVal;
-		} height;
-		uint8_t respStat;
-//float height;//除以10 传输float类型  单位mm
-}pressSettlStru;
+
 pressSettlStru pressSettle[PRESSSETTL_485_NUM];
 //返回沉降仪的通讯状态 true--通讯成功 false--通讯失败
 int pressSettleState(int i)
@@ -395,15 +387,17 @@ bool modPressSetlWarn2Send()
 }
 
 
-
+extern int dispChenjiangTotlNum;
 
 //沉降仪读取并打包  供别的函数调用
 void pressSettRead2Send(rt_bool_t netStat,bool respFlag)
 {
+	  dispChenjiangTotlNum=0;
 	  int workFlag=RT_FALSE;
 		for(int i=0;i<PRESSSETTL_485_NUM;i++){
 				if(sheet.pressSetl[i].workFlag==RT_TRUE){
 						readPSTempHeight(i);
+					  dispChenjiangTotlNum++;
 						workFlag=RT_TRUE;
 				}
 		}

@@ -693,6 +693,13 @@ void UART4_DMA_TX_IRQHandler(void)
 #endif /* BSP_USING_UART4*/
 
 #if defined(BSP_USING_UART5)
+
+
+#if   USE_RINGBUF
+				
+#else
+			extern struct  rt_messagequeue LCDmque;
+#endif
 //extern struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
 //extern uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
 
@@ -713,11 +720,13 @@ void UART5_IRQHandler(void)
 		{
 			  
 				HAL_UART_Receive(&huart5,&Res,1,1000); 
-//			  rt_kprintf("*%02x*\n",Res);
+
 			  //rt_mq_send(&LCDmque,&Res,1); // 往任务中发队列会丢数据  suqi
-//			  if(lcdRecLen<LCD_BUF_LEN)
-//						lcdRecBuf[lcdRecLen++]=Res;
+#if   USE_RINGBUF
 				Write_RingBuff(Res);
+#else
+			rt_mq_send(&LCDmque,&Res,1);
+#endif
 				//recTestLen++;
 		}
 		HAL_UART_IRQHandler(&huart5);	

@@ -198,10 +198,11 @@
 //V1.15    rt_mq_send(&LCDmque,&Res,1); // 往任务中发队列会丢数据  改成ringbuf    20230529
 //         更改氧气打包 oxy为oxygen
 //V1.16    增加传感器数据显示界面  修改qiti为硫化氢      20230530
-#define APP_VER       ((1<<8)+16)//0x0105 表示1.5版本  20230516
+//V1.17    增加若干传感器显示界面 修改lcdtask接收数据为队列  队列执行效率块  密码输入显示更快一些 20230531
+#define APP_VER       ((1<<8)+17)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230530";
+const char date[]="20230531";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;
@@ -236,8 +237,13 @@ struct rt_event WDTEvent;
 
 
 //队列的定义
-//struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
-//uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
+
+#if   USE_RINGBUF
+
+#else
+	struct  rt_messagequeue LCDmque;//= {RT_NULL} ;//创建LCD队列
+	uint8_t LCDQuePool[LCD_BUF_LEN];  //创建lcd队列池
+#endif
 //任务的定义
 extern  void   netDataRecTask(void *para);//网络数据接收
 extern  void   netDataSendTask(void *para);//网络数据发送
@@ -341,12 +347,16 @@ int main(void)
     {
         rt_kprintf("%screate lcdSend_mutex failed\n",sign);
     }
-//		int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);       
-//		if (ret != RT_EOK)
-//		{
-//				rt_kprintf("%sinit LCD msgque failed.\n",sign);
-//				return -1;
-//		}
+#if   USE_RINGBUF
+
+#else
+		int ret = rt_mq_init(&LCDmque,"LCDrecBuf",&LCDQuePool[0],1,LCD_BUF_LEN,RT_IPC_FLAG_FIFO);       
+		if (ret != RT_EOK)
+		{
+				rt_kprintf("%sinit LCD msgque failed.\n",sign);
+				return -1;
+		}
+#endif
 		extern void 	uartMutexQueueCreate();
 		uartMutexQueueCreate();
 ////////////////////////////////////邮箱//////////////////////////////////
@@ -371,8 +381,7 @@ int main(void)
 
     }
 #endif
-		
-
+	
 ////////////////////////////////任务////////////////////////////////////
     tidW5500 =  rt_thread_create("w5500",w5500Task,RT_NULL,1024,2, 10 );
 		if(tidW5500!=NULL){
@@ -389,8 +398,6 @@ int main(void)
 				rt_thread_startup(tidNetSend);													 
 				rt_kprintf("%sRTcreat netDataSendTask \r\n",sign);
 		}
-
-		
 		tidUpkeep 	=  rt_thread_create("upKeep",upKeepStateTask,RT_NULL,512*3,4, 10 );
 		if(tidUpkeep!=NULL){
 				rt_thread_startup(tidUpkeep);													 

@@ -100,7 +100,20 @@ void  nextModName();
 
 void  lastModName();
 void  changeBmp(int num);
+void  dispCurrentModData(void);
 
+void  dispHuanliuData();
+void  nextHuanliuIndex();
+void  lastHuanliuIndex();
+void  dispJufangData();
+void  nextJufangIndex();
+void  lastJufangIndex();
+void  dispChenjiangData();
+void  nextChenJiangIndex();
+void  lastChenJiangIndex();
+void  dispWaipoData();
+void  lastWaipoIndex();
+void  nextWaipoIndex();
 extern int modbusChosIndex;
 #ifndef     ANA_MASK
 void lcdAnaConfig(void);
@@ -117,7 +130,8 @@ void  keyReturn(uint16_t keyAddr)
 		{
 			
 			case KEY_SURE_CHOOSE_MODBUS_ADDR:
-				changeBmp(71+modbusChosIndex);
+				changeBmp(71+modbusChosIndex);//71.bmp为环流数据展示
+			  dispCurrentModData();
 				break;
 			case KEY_LAST_CHOOSE_MODBUS_ADDR:
 				lastModName();
@@ -129,22 +143,86 @@ void  keyReturn(uint16_t keyAddr)
 				break;
 			case KEY_MODUBS_DATA_ADDR:
 				dispChooseModbusName();
-				break ;		
-			case	KEY_MODBUS_CFG_NAME_ADDR://点击传感器设置名称显示框调出 模糊界面  显示到1380
+				break ;	
+			case KEY_DATA_HUANLIU_LAST_ADDR:
+				lastHuanliuIndex();
+				dispHuanliuData();
+				break;
+			case KEY_DATA_HUANLIU_NEXT_ADDR:
+				nextHuanliuIndex();
+				dispHuanliuData();
+				break;
+			case	KEY_DATA_JUFANG_LAST_ADDR:
+				lastJufangIndex();
+				dispJufangData();
+				break;
+			case 	KEY_DATA_JUFANG_NEXT_ADDR:
+				nextJufangIndex();
+				dispJufangData();
+				break;
+			case	KEY_DATA_CEHNJIANG_LAST_ADDR:
+				lastChenJiangIndex();
+				dispChenjiangData();
+				break;
+			case	KEY_DATA_CEHNJIANG_NEXT_ADDR:
+				nextChenJiangIndex();
+				dispChenjiangData();
+				break;
+			case	KEY_DATA_FANGWAIPO_LAST_ADDR:
+				lastWaipoIndex();
+				dispWaipoData();
+				break;
+      case 	KEY_DATA_FANGWAIPO_NEXT_ADDR:
+				nextWaipoIndex();
+				dispWaipoData();
+				break;
+			case	KEY_DATA_CH4_LAST_ADDR:
+				break;
+      case 	KEY_DATA_CH4_NEXT_ADDR:
+				break;
+			case	KEY_DATA_O2_LAST_ADDR:
+				break;
+      case 	KEY_DATA_O2_NEXT_ADDR:
+				break;
+			case	KEY_DATA_H2S_LAST_ADDR:
+				break;
+      case 	KEY_DATA_H2S_NEXT_ADDR:
+				break;
+			case	KEY_DATA_CO_LAST_ADDR:
+				break;
+      case 	KEY_DATA_CO_NEXT_ADDR:
+				break;
+			case	KEY_DATA_WENSHIDU_LAST_ADDR:
+				break;
+      case 	KEY_DATA_WENSHIDU_NEXT_ADDR:
+				break;
+			case	KEY_DATA_WATER_LAST_ADDR:
+				break;
+      case 	KEY_DATA_WATER_NEXT_ADDR:
+				break;
+			case	KEY_DATA_LIEFENG_LAST_ADDR:
+				break;
+      case 	KEY_DATA_LIEFENG_NEXT_ADDR:
+				break;
+			case	KEY_DATA_COVER_LAST_ADDR:
+				break;
+      case 	KEY_DATA_COVER_NEXT_ADDR:
+				break;
+			case KEY_MODBUS_CFG_NAME_ADDR://点击传感器设置名称显示框调出 模糊界面  显示到1380
 				//5A A5 1182 1380 C9CF BAA3 B9C8 D4AA BFC6 BCBC FFFF
         dispCinaName(buf);
 				break;
-			case	KEY_MODBUS_LASTNAME_ADDR:
+			case KEY_MODBUS_LASTNAME_ADDR:
 				dispChinaNameIndexLow();
 				dispCinaName(buf);
 				break;
-			case	KEY_MODBUS_NEXTNAME_ADDR:
+			case KEY_MODBUS_NEXTNAME_ADDR:
 				dispChinaNameIndexAdd();
 				dispCinaName(buf);
 				break;
-			case	KEY_MODBUS_SURENAME_ADDR:// 显示到1360
+			case KEY_MODBUS_SURENAME_ADDR:// 显示到1360
 				break;	
-			case  KEY_IP_READ_ADDR:
+			case KEY_IP_READ_ADDR:
 				LCDDispIP();
 				break;
 			case KEY_PORT_READ_ADDR:

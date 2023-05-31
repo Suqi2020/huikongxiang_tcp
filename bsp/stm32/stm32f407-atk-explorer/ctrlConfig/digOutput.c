@@ -29,10 +29,12 @@ static void digOutput(int argc, char *argv[])
 		}
 		if(argc!=5){
 				goto ERR;
-		}
+		}	
 		if(devIDOKCheck(argv[2])!=true){
+			if((strcmp(argv[5],"0")!=0)&&(strcmp(argv[5],"255")!=0)){
 				rt_kprintf("%sERR input the same ID\n",sign);
 			  return;
+			}
 		}
     port = atoi16(argv[4],10);
 		if((port<=DO_NUM)&&(port>0)){//添加
@@ -90,8 +92,10 @@ static void power3V3(int argc, char *argv[])
 				goto ERR;
 		}
 		if(devIDOKCheck(argv[2])!=true){
+			if((strcmp(argv[5],"0")!=0)&&(strcmp(argv[5],"255")!=0)){
 				rt_kprintf("%sERR input the same ID\n",sign);
 			  return;
+			}
 		}
     port = atoi16(argv[4],10);
 		if((port<=V33O_NUM)&&(port>0)){//添加
@@ -151,8 +155,10 @@ static void power5V(int argc, char *argv[])
 				goto ERR;
 		}
 		if(devIDOKCheck(argv[2])!=true){
+			if((strcmp(argv[5],"0")!=0)&&(strcmp(argv[5],"255")!=0)){
 				rt_kprintf("%sERR input the same ID\n",sign);
 			  return;
+			}
 		}
     port = atoi16(argv[4],10);
 		if((port<=V5O_NUM)&&(port>0)){//添加
@@ -209,8 +215,10 @@ static void power12V(int argc, char *argv[])
 				goto ERR;
 		}
 		if(devIDOKCheck(argv[2])!=true){
+			if((strcmp(argv[5],"0")!=0)&&(strcmp(argv[5],"255")!=0)){
 				rt_kprintf("%sERR input the same ID\n",sign);
 			  return;
+			}
 		}
     port = atoi16(argv[4],10);
 		if((port<=V12O_NUM)&&(port>0)){//添加
