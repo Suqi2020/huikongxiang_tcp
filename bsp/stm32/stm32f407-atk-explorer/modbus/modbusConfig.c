@@ -1137,7 +1137,7 @@ bool  devIDOKCheck(char *inputID)
 		}
 
 		int i;
-		bool  add=true;
+//		bool  add=true;
 ////////////////////////////////////////////////模拟数据打包////////////////////////////////////////////////////
 #ifndef     ANA_MASK
 		for(i=0;i<ANALOG_NUM;i++){
@@ -1201,3 +1201,4 @@ bool  devIDOKCheck(char *inputID)
 		 return true;
 }
 #endif
+

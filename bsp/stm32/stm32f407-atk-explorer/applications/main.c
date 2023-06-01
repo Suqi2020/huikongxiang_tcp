@@ -199,10 +199,11 @@
 //         更改氧气打包 oxy为oxygen
 //V1.16    增加传感器数据显示界面  修改qiti为硫化氢      20230530
 //V1.17    增加若干传感器显示界面 修改lcdtask接收数据为队列  队列执行效率块  密码输入显示更快一些 20230531
-#define APP_VER       ((1<<8)+17)//0x0105 表示1.5版本  20230516
+//V1.18    完善其他传感器的LCD显示代码       20230601
+#define APP_VER       ((1<<8)+18)//0x0105 表示1.5版本  20230516
 //注：本代码中json格式解析非UTF8_格式代码（GB2312格式中文） 会导致解析失败
 //    打印log如下 “[dataPhrs]err:json cannot phrase”  20230403
-const char date[]="20230531";
+const char date[]="20230601";
 
 //static    rt_thread_t tid 	= RT_NULL;
 static    rt_thread_t tidW5500 	  = RT_NULL;

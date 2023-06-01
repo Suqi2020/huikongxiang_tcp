@@ -7,11 +7,7 @@ const static char sign[]="[温湿度]";
 //#define   SLAVE_ADDR     0X01 
 //#define   LENTH          50  //工作环流用到的最大接收buf长度
 static bool alarmFLag=false;
-typedef struct{
-	float temp;
-	float hum; 
-	uint8_t respStat;
-}thStru;
+
 thStru thum[TEMPHUM_485_NUM];
 
 //float temp[TEMPHUM_485_NUM];
@@ -337,15 +333,17 @@ bool modTempHumWarn2Send()
 
 
 
-
+extern int dispWenshiduTotlNum;
 //温湿度值读取并打包json格式
 void tempHumRead2Send(rt_bool_t netStat,bool respFlag)
 {
 	 int workFlag=RT_FALSE;
+	 dispWenshiduTotlNum=0;
 	 for(int i=0;i<TEMPHUM_485_NUM;i++){
 		if(sheet.tempHum[i].workFlag==RT_TRUE){
 					readTempHum(i);
 					workFlag=RT_TRUE;
+			    dispWenshiduTotlNum++;
 			}
 	}
 	if(workFlag==RT_TRUE){

@@ -6,20 +6,7 @@ static  bool alarmFLag=false;
 //#define   SLAVE_ADDR     0X02 
 //#define   LENTH          50  //工作环流用到的最大接收buf长度
 
-typedef struct{
-	  //float temp;//除以100 传输float类型  单位0C
-	   union {
-				float flotVal;
-				uint32_t   intVal;
-		} distanc;
-		 union {
-				float flotVal;
-				uint32_t   intVal;
-		} temp;
-		uint8_t respStat;
-//float height;//除以10 传输float类型  单位mm
-}crackMeterStru;
-static crackMeterStru crackMeter[CRACKMETER_485_NUM];
+crackMeterStru crackMeter[CRACKMETER_485_NUM];
 //返回沉降仪的通讯状态 true--通讯成功 false--通讯失败
 int  crackMeterState(int i)
 {
@@ -372,15 +359,17 @@ bool modCrackMeterWarn2Send()
 
 
 
-
+extern int dispLiefengTotlNum;
 //沉降仪读取并打包  供别的函数调用
 void crackMeterRead2Send(rt_bool_t netStat,bool respFlag)
 {
 	  int workFlag=RT_FALSE;
+  	dispLiefengTotlNum=0;
 		for(int i=0;i<CRACKMETER_485_NUM;i++){
 				if(sheet.crackMeter[i].workFlag==RT_TRUE){
 						readCrackMeter(i);
 						workFlag=RT_TRUE;
+					  dispLiefengTotlNum++;
 				}
 		}
 		if(workFlag==RT_TRUE){

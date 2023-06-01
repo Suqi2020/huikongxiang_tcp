@@ -329,15 +329,18 @@ bool modO2Warn2Send()
 }
 //4种气体json打包的二次封装
 
+extern int dispO2TotlNum;
 //co气体json打包的二次封装
 void  o2Read2Send(rt_bool_t netStat,bool respFlag)
 {
 		rt_kprintf("%s打包采集的o2数据\r\n",sign);
 		 int workFlag=RT_FALSE;
+	 dispO2TotlNum=0;
 	 for(int i=0;i<O2_485_NUM;i++){
 		if(sheet.o2[i].workFlag==RT_TRUE){
 					readO2(i);
 					workFlag=RT_TRUE;
+			    dispO2TotlNum++;
 			}
 	}
 	if(workFlag==RT_TRUE){

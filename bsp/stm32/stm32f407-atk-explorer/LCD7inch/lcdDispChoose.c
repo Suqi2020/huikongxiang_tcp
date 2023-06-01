@@ -34,10 +34,18 @@ void  lastModName()
 			modbusChosIndex--;
 }
 
-void dispHuanliuData();
-void  dispJufangData();
-void  dispChenjiangData();
-void  dispWaipoData();
+void dispHuanliuData(void);
+void  dispJufangData(void);
+void  dispChenjiangData(void);
+void  dispWaipoData(void);
+void  dispCH4Data(void);
+void  dispO2Data(void);
+void  dispH2SData(void);
+void  dispCOData(void);
+void  dispWenshiduData(void);
+void  dispLiefengData(void);
+void  dispJinggaiData(void);
+void  dispWaterData(void);
 //切换传感器目录后 按确定键盘显示当前modbus的数据
 void  dispCurrentModData()
 {
@@ -56,24 +64,34 @@ void  dispCurrentModData()
 			case 3://"FangWaiPo"
 				dispWaipoData();
 				break;
-			case 4://"JiaWan"
+			case 4://"JiaWan"();
+				dispCH4Data();
 				break;
 			case 5://"YangQi",
+				dispO2Data();
 				break;
 			case 6://"LiuHuaQing",
+				dispH2SData();
 				break;
 			case 7://"YiYangHuaTan",
+				dispCOData();
 				break;
 			case 8://"WenShiDu"
+				dispWenshiduData();
 				break;
 			case 9://"ShuiWei"
+				dispWaterData();
 				break;
 			case 10://"LieFengYi"
+				dispLiefengData();
 				break;
 			case 11://"JingGai"
+				dispJinggaiData();
 				break;
 			default:
         rt_kprintf("%s ERR:dispCurrentModData \n",sign);
 				break;
 		}
 }
+
+

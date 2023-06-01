@@ -71,5 +71,36 @@ typedef struct{
 		uint16_t acclrationZ;
 	  uint8_t  respStat;
 }threeAxisStru;
+//温湿度
+typedef struct{
+	float temp;
+	float hum; 
+	uint8_t respStat;
+}thStru;
+
+
+//裂缝仪
+typedef struct{
+	  //float temp;//除以100 传输float类型  单位0C
+	   union {
+				float flotVal;
+				uint32_t   intVal;
+		} distanc;
+		 union {
+				float flotVal;
+				uint32_t   intVal;
+		} temp;
+		uint8_t respStat;
+//float height;//除以10 传输float类型  单位mm
+}crackMeterStru;
+//井盖
+typedef struct{
+	uint8_t incline;//倾斜状态 1-倾斜
+	uint8_t switch2p;//2盖状态 1-打开
+	uint8_t	vibration;//震动报警  1-震动
+	uint8_t switch1p;//1盖状态 1-打开
+	uint8_t respStat;
+}coverStru;
+
 #endif
 

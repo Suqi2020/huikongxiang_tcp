@@ -7,14 +7,8 @@ const static char sign[]="[井盖]";
 //#define   SLAVE_ADDR     0X01 
 //#define   LENTH          50  //工作环流用到的最大接收buf长度
 static bool alarmFLag=false;
-typedef struct{
-	uint8_t incline;//倾斜状态 1-倾斜
-	uint8_t switch2p;//2盖状态 1-打开
-	uint8_t	vibration;//震动报警  1-震动
-	uint8_t switch1p;//1盖状态 1-打开
-	uint8_t respStat;
-}thStru;
-static thStru cover[COVER_485_NUM];
+
+coverStru cover[COVER_485_NUM];
 
 //float temp[TEMPHUM_485_NUM];
 //float hum[TEMPHUM_485_NUM]; 
@@ -371,15 +365,17 @@ bool modCoverWarn2Send()
 
 
 
-
+extern int dispJinggaiTotlNum;
 //井盖状态读取并打包json格式
 void coverRead2Send(rt_bool_t netStat,bool respFlag)
 {
 	 int workFlag=RT_FALSE;
+	  dispJinggaiTotlNum=0;
 	 for(int i=0;i<COVER_485_NUM;i++){
 		if(sheet.cover[i].workFlag==RT_TRUE){
 					readCover(i);
 					workFlag=RT_TRUE;
+			    dispJinggaiTotlNum++;
 			}
 		}
 		if(workFlag==RT_TRUE){

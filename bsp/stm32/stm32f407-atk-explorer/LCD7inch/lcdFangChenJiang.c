@@ -18,7 +18,7 @@ void  dispChenjiangData()
 				//显示总页数
 				buf[0]=0;
 				buf[1]=0;
-				LCDWtite(DISP_DATA_HUANLIU_TOTALNUM_ADDR,buf,2);
+				LCDWtite(DISP_DATA_CEHNJIANG_TOTALNUM_ADDR,buf,2);
 				//显示id
 				buf[0]=0xff;
 				buf[1]=0xff;

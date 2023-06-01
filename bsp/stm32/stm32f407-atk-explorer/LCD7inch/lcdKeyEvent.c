@@ -94,26 +94,50 @@ void LCDDispNetErrState(void);
 bool surePassWord(void);
 void LCDRstPw(void);
 
-void dispChooseModbusName();
+void dispChooseModbusName(void);
 
-void  nextModName();
+void  nextModName(void);
 
-void  lastModName();
+void  lastModName(void);
 void  changeBmp(int num);
 void  dispCurrentModData(void);
 
-void  dispHuanliuData();
-void  nextHuanliuIndex();
-void  lastHuanliuIndex();
-void  dispJufangData();
-void  nextJufangIndex();
-void  lastJufangIndex();
-void  dispChenjiangData();
-void  nextChenJiangIndex();
-void  lastChenJiangIndex();
-void  dispWaipoData();
-void  lastWaipoIndex();
-void  nextWaipoIndex();
+void  dispHuanliuData(void);
+void  nextHuanliuIndex(void);
+void  lastHuanliuIndex(void);
+void  dispJufangData(void);
+void  nextJufangIndex(void);
+void  lastJufangIndex(void);
+void  dispChenjiangData(void);
+void  nextChenJiangIndex(void);
+void  lastChenJiangIndex(void);
+void  dispWaipoData(void);
+void  lastWaipoIndex(void);
+void  nextWaipoIndex(void);
+void  dispCH4Data(void);
+void  nextCH4Index(void);
+void  lastCH4Index(void);
+void  dispO2Data(void);
+void  nextO2Index(void);
+void  lastO2Index(void);
+void  dispH2SData(void);
+void  nextH2SIndex(void);
+void  lastH2SIndex(void);
+void  dispCOData(void);
+void  nextCOIndex(void);
+void  lastCOIndex(void);
+void  dispWenshiduData(void);
+void  nextWenshiduIndex(void);
+void  lastWenshiduIndex(void);
+void  dispWaterData(void);
+void  nextWaterIndex(void);
+void  lastWaterIndex(void);
+void  dispLiefengData(void);
+void  nextLiefengIndex(void);
+void  lastLiefengIndex(void);
+void  nextJinggaiIndex(void);
+void  lastJinggaiIndex(void);
+void  dispJinggaiData(void);
 extern int modbusChosIndex;
 #ifndef     ANA_MASK
 void lcdAnaConfig(void);
@@ -176,37 +200,70 @@ void  keyReturn(uint16_t keyAddr)
 				nextWaipoIndex();
 				dispWaipoData();
 				break;
+
 			case	KEY_DATA_CH4_LAST_ADDR:
+				lastCH4Index();
+			  dispCH4Data();
 				break;
       case 	KEY_DATA_CH4_NEXT_ADDR:
+				nextCH4Index();
+			  dispCH4Data();
 				break;
 			case	KEY_DATA_O2_LAST_ADDR:
+				lastO2Index();
+			  dispO2Data();
 				break;
       case 	KEY_DATA_O2_NEXT_ADDR:
+				nextO2Index();
+			  dispO2Data();
 				break;
 			case	KEY_DATA_H2S_LAST_ADDR:
+				lastH2SIndex();
+			  dispH2SData();
 				break;
       case 	KEY_DATA_H2S_NEXT_ADDR:
+				nextH2SIndex();
+			  dispH2SData();
 				break;
 			case	KEY_DATA_CO_LAST_ADDR:
+				lastCOIndex();
+			  dispCOData();
 				break;
       case 	KEY_DATA_CO_NEXT_ADDR:
+				nextCOIndex();
+			  dispCOData();
 				break;
 			case	KEY_DATA_WENSHIDU_LAST_ADDR:
+				lastWenshiduIndex();
+			  dispWenshiduData();
 				break;
       case 	KEY_DATA_WENSHIDU_NEXT_ADDR:
+				nextWenshiduIndex();
+				dispWenshiduData();
 				break;
 			case	KEY_DATA_WATER_LAST_ADDR:
+				lastWaterIndex();
+				dispWaterData();
 				break;
       case 	KEY_DATA_WATER_NEXT_ADDR:
+				nextWaterIndex();
+				dispWaterData();
 				break;
 			case	KEY_DATA_LIEFENG_LAST_ADDR:
+				lastLiefengIndex();
+				dispLiefengData();
 				break;
       case 	KEY_DATA_LIEFENG_NEXT_ADDR:
+				nextLiefengIndex();
+				dispLiefengData();
 				break;
 			case	KEY_DATA_COVER_LAST_ADDR:
+				lastJinggaiIndex();
+				dispJinggaiData();
 				break;
       case 	KEY_DATA_COVER_NEXT_ADDR:
+				nextJinggaiIndex();
+				dispJinggaiData();
 				break;
 			case KEY_MODBUS_CFG_NAME_ADDR://点击传感器设置名称显示框调出 模糊界面  显示到1380
 				//5A A5 1182 1380 C9CF BAA3 B9C8 D4AA BFC6 BCBC FFFF
@@ -568,7 +625,7 @@ void lcdCopyAnaPort(uint8_t *rec);
 //拷贝输入的time到AnaInput中
 void lcdCopyAnaTime(uint8_t *rec);
 bool checkPassWord(char *rec);
-void LCDHidePssd();
+void LCDHidePssd(void);
 //lcd 发来的配置解析
 void LCDDispConfig(uint8_t *recBuf,int len)
 {
@@ -899,3 +956,4 @@ void changeBmp(int num)
 		LCDDataSend(buf,sizeof(buf));
 		rt_mutex_release(lcdSend_mutex);
 }
+

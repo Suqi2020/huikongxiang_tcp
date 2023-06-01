@@ -305,16 +305,18 @@ bool modH2sWarn2Send()
 		sprinBuf=RT_NULL;
 		return true;
 }
-
+extern int dispH2STotlNum;
 //co气体json打包的二次封装
 void  h2sRead2Send(rt_bool_t netStat,bool respFlag)
 {
 		rt_kprintf("%s打包采集的h2s数据\r\n",sign);
 		 int workFlag=RT_FALSE;
+	  dispH2STotlNum=0;
 	 for(int i=0;i<H2S_485_NUM;i++){
 		if(sheet.h2s[i].workFlag==RT_TRUE){
 					readH2S(i);
 					workFlag=RT_TRUE;
+			    dispH2STotlNum++;
 			}
 	}
 	if(workFlag==RT_TRUE){

@@ -136,10 +136,9 @@ uint8 connect(SOCKET s, uint8 * addr, uint16 port)
         IINCHIP_WRITE( Sn_DPORT1(s), (uint8)(port & 0x00ff));
         IINCHIP_WRITE( Sn_CR(s) ,Sn_CR_CONNECT);
         /* wait for completion */
-						int count =60000;
+						int  count =60000;
 					 while( IINCHIP_READ(Sn_CR(s) ) &&(count--))
 						 ;
-
         while ( IINCHIP_READ(Sn_SR(s)) != SOCK_SYNSENT )
         {
             if(IINCHIP_READ(Sn_SR(s)) == SOCK_ESTABLISHED)
@@ -214,6 +213,7 @@ uint16 send(SOCKET s, const uint8 * buf, uint16 len)
 	  int count =60000;
    while( IINCHIP_READ(Sn_CR(s) ) &&(count--))
 		 ;
+
   while ( (IINCHIP_READ(Sn_IR(s) ) & Sn_IR_SEND_OK) != Sn_IR_SEND_OK )
   {
     status = IINCHIP_READ(Sn_SR(s));

@@ -12,7 +12,7 @@ const static char sign[]="[一氧化碳]";
 //#define   LENTH          50  //工作环流用到的最大接收buf长度
 
 
-static float co[CO_485_NUM];
+float co[CO_485_NUM];
 static uint8_t respStat[CO_485_NUM];
 bool gasAlarmFlag=false;
 //打包串口发送 
@@ -313,15 +313,18 @@ bool modCoWarn2Send()
 		sprinBuf=RT_NULL;
 		return true;
 }
+extern int dispCOTotlNum;
 //co气体json打包的二次封装
 void  coRead2Send(rt_bool_t netStat,bool respFlag)
 {
 		rt_kprintf("%s打包采集的co数据\r\n",sign);
 		 int workFlag=RT_FALSE;
+	 dispCOTotlNum=0;
 	 for(int i=0;i<CO_485_NUM;i++){
 		if(sheet.co[i].workFlag==RT_TRUE){
 					readCO(i);
 					workFlag=RT_TRUE;
+			    dispCOTotlNum++;
 			}
 	}
 	if(workFlag==RT_TRUE){
